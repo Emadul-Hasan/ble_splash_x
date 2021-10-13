@@ -17,10 +17,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
     'Device4',
     'Device5',
     'Device6',
-    'Device7',
-    'Device8',
-    'Device9',
-    'Device10'
   ];
   @override
   Widget build(BuildContext context) {
