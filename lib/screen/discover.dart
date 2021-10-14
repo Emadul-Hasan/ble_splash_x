@@ -128,7 +128,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     margin: EdgeInsets.only(left: 5.0, right: 5.0),
                     child: ListTile(
                       onTap: () {
-                        Navigator.pushReplacementNamed(context, HomePage.id);
+                        Navigator.pushReplacementNamed(context, Homepage.id,
+                            arguments: device[0]);
                         // Navigator.pushNamed(context, RemainingSubTask.id,
                         //     arguments: listOfTask[index].id);
                       },

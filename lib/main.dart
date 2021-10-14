@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       routes: {
         SplashScreen.id: (context) => SplashScreen(),
         DiscoverPage.id: (context) => DiscoverPage(),
-        HomePage.id: (context) => HomePage(),
+        Homepage.id: (context) => Homepage(),
         // ClockOut.id: (context) => ClockOut(),
         // DashBoard.id: (context) => DashBoard(),
       },
