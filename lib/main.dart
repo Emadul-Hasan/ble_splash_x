@@ -1,3 +1,5 @@
+import 'package:ble_splash_x/screen/HomePage.dart';
+import 'package:ble_splash_x/screen/discover.dart';
 import 'package:ble_splash_x/screen/splash.dart';
 import 'package:flutter/material.dart';
 
@@ -17,8 +19,8 @@ class MyApp extends StatelessWidget {
       initialRoute: SplashScreen.id,
       routes: {
         SplashScreen.id: (context) => SplashScreen(),
-        // Login.id: (context) => Login(),
-        // ClockIn.id: (context) => ClockIn(),
+        DiscoverPage.id: (context) => DiscoverPage(),
+        HomePage.id: (context) => HomePage(),
         // ClockOut.id: (context) => ClockOut(),
         // DashBoard.id: (context) => DashBoard(),
       },

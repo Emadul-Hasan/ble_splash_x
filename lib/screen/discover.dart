@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:flutter/material.dart';
 
 class DiscoverPage extends StatefulWidget {
+  static const String id = 'DiscoverPage';
   const DiscoverPage({Key? key}) : super(key: key);
 
   @override
@@ -126,6 +128,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     margin: EdgeInsets.only(left: 5.0, right: 5.0),
                     child: ListTile(
                       onTap: () {
+                        Navigator.pushReplacementNamed(context, HomePage.id);
                         // Navigator.pushNamed(context, RemainingSubTask.id,
                         //     arguments: listOfTask[index].id);
                       },

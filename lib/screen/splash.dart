@@ -24,10 +24,7 @@ class _MyHomepageState extends State<MyHomepage> {
     super.initState();
 
     Timer(Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DiscoverPage()),
-      );
+      Navigator.pushReplacementNamed(context, DiscoverPage.id);
     });
   }
 
@@ -39,7 +36,7 @@ class _MyHomepageState extends State<MyHomepage> {
         children: [
           Center(
             child: Image.asset(
-              "img/credologo.png",
+              "images/credologo.png",
               height: 80.0,
               width: 80.0,
             ),
