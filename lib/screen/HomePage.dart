@@ -29,347 +29,387 @@ class Homepage extends StatelessWidget {
             height: 10.0,
             width: double.infinity,
           ),
-          Container(
-            padding: EdgeInsets.only(bottom: 10.0, left: 40, right: 40.0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black12,
-                width: 5.0,
-              ),
-            ),
+          Expanded(
+            flex: 4,
             child: Container(
-              padding: EdgeInsets.only(
-                  top: 20.0, bottom: 20.0, left: 15.0, right: 15.0),
+              padding: EdgeInsets.only(bottom: 10.0, left: 40, right: 40.0),
               decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.green,
-                    width: 3.0,
-                  ),
+                border: Border.all(
+                  color: Colors.black12,
+                  width: 5.0,
                 ),
               ),
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RichText(
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: "Live CO",
-                          style: TextStyle(
-                            fontSize: 28.0,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                          )),
-                      TextSpan(
-                        text: '2',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.w500,
-                          fontFeatures: [
-                            FontFeature.subscripts(),
-                          ],
-                        ),
-                      ),
-                      TextSpan(
-                          text: ' Value',
-                          style: TextStyle(
-                            fontSize: 28.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
-                          ))
-                    ]),
+              child: Container(
+                padding: EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.green,
+                      width: 3.0,
+                    ),
                   ),
-                  SizedBox(height: 15.0),
-                  RichText(
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: "700",
+                ),
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: "Live CO",
+                            style: TextStyle(
+                              fontSize: 28.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                            )),
+                        TextSpan(
+                          text: '2',
                           style: TextStyle(
-                            fontSize: 40.0,
                             color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                          )),
-                      TextSpan(
-                        text: 'ppm',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                          fontFeatures: [
-                            FontFeature.subscripts(),
-                          ],
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.w500,
+                            fontFeatures: [
+                              FontFeature.subscripts(),
+                            ],
+                          ),
                         ),
-                      ),
-                    ]),
-                  ),
-                ],
+                        TextSpan(
+                            text: ' Value',
+                            style: TextStyle(
+                              fontSize: 28.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ))
+                      ]),
+                    ),
+                    SizedBox(height: 15.0),
+                    RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: "700",
+                            style: TextStyle(
+                              fontSize: 40.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                            )),
+                        TextSpan(
+                          text: 'ppm',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
+                            fontFeatures: [
+                              FontFeature.subscripts(),
+                            ],
+                          ),
+                        ),
+                      ]),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 10.0),
-            padding: EdgeInsets.only(
-                top: 10.0, bottom: 10.0, left: 65.0, right: 65.0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black12,
-                width: 5.0,
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.only(
+                    top: 10.0, bottom: 10.0, left: 65.0, right: 65.0),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black12,
+                    width: 5.0,
+                  ),
+                ),
+                child: RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: "Set CO",
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                        )),
+                    TextSpan(
+                      text: '2',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w500,
+                        fontFeatures: [
+                          FontFeature.subscripts(),
+                        ],
+                      ),
+                    ),
+                    TextSpan(
+                        text: ' ranges',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ))
+                  ]),
+                ),
               ),
             ),
-            child: RichText(
-              text: TextSpan(children: [
-                TextSpan(
-                    text: "Set CO",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400,
-                    )),
-                TextSpan(
-                  text: '2',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w500,
-                    fontFeatures: [
-                      FontFeature.subscripts(),
+          ),
+          Expanded(
+            flex: 7,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 30.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.green,
+                      ),
+                      SliderTheme(
+                        data: SliderThemeData(
+                          thumbShape: RoundSliderThumbShape(
+                              enabledThumbRadius: 12.0,
+                              disabledThumbRadius: 12.0),
+                          overlayShape:
+                              RoundSliderOverlayShape(overlayRadius: 12.0),
+                          thumbColor: Colors.white,
+                          overlayColor: Colors.white38,
+                          disabledThumbColor: Colors.white,
+                          // disabledActiveTickMarkColor: Colors.green,
+                          // disabledActiveTrackColor: Colors.green,
+                          activeTrackColor: Colors.green,
+                          // inactiveTrackColor: Colors.blue,
+                          trackHeight: 3.0,
+                          showValueIndicator: ShowValueIndicator.always,
+                          // valueIndicatorShape: SliderComponentShape.noThumb,
+                          valueIndicatorColor: Colors.green,
+                        ),
+                        child: Slider(
+                          label: "770.0",
+                          autofocus: true,
+                          value: 770.0,
+                          // activeColor: Colors.green,
+                          onChanged: (value) {
+                            // setState(() {
+                            //   delay = value.toInt();
+                            //   sendData(delay.toString());
+                            //   print(delay);
+                            // });
+                          },
+                          min: 400.0,
+                          max: 1000.0,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                TextSpan(
-                    text: ' ranges',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ))
-              ]),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 40.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.green,
-                ),
-                SliderTheme(
-                  data: SliderThemeData(
-                    thumbShape: RoundSliderThumbShape(
-                        enabledThumbRadius: 12.0, disabledThumbRadius: 12.0),
-                    overlayShape: RoundSliderOverlayShape(overlayRadius: 12.0),
-                    thumbColor: Colors.white,
-                    overlayColor: Colors.white38,
-                    disabledThumbColor: Colors.white,
-                    // disabledActiveTickMarkColor: Colors.green,
-                    // disabledActiveTrackColor: Colors.green,
-                    activeTrackColor: Colors.green,
-                    // inactiveTrackColor: Colors.blue,
-                    trackHeight: 3.0,
-                    showValueIndicator: ShowValueIndicator.always,
-                    // valueIndicatorShape: SliderComponentShape.noThumb,
-                    valueIndicatorColor: Colors.green,
-                  ),
-                  child: Slider(
-                    label: "770.0",
-                    autofocus: true,
-                    value: 770.0,
-                    // activeColor: Colors.green,
-                    onChanged: (value) {
-                      // setState(() {
-                      //   delay = value.toInt();
-                      //   sendData(delay.toString());
-                      //   print(delay);
-                      // });
-                    },
-                    min: 400.0,
-                    max: 1000.0,
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 0.0,
+                          width: 0.0,
+                        ),
+                        flex: 2,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          '400',
+                          style: TextStyle(fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          '1000',
+                          style: TextStyle(fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 115.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    '400',
-                    style: TextStyle(fontWeight: FontWeight.w400),
+                Container(
+                  margin: EdgeInsets.only(top: 30.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.yellow,
+                      ),
+                      SliderTheme(
+                        data: SliderThemeData(
+                          thumbShape: RoundSliderThumbShape(
+                              enabledThumbRadius: 12.0,
+                              disabledThumbRadius: 12.0),
+                          overlayShape:
+                              RoundSliderOverlayShape(overlayRadius: 12.0),
+                          thumbColor: Colors.white,
+                          overlayColor: Colors.white38,
+                          disabledThumbColor: Colors.white,
+                          // disabledActiveTickMarkColor: Colors.green,
+                          // disabledActiveTrackColor: Colors.green,
+                          activeTrackColor: Colors.yellow,
+                          // inactiveTrackColor: Colors.blue,
+                          trackHeight: 3.0,
+                          showValueIndicator: ShowValueIndicator.always,
+                          // valueIndicatorShape: SliderComponentShape.noThumb,
+                          valueIndicatorColor: Colors.yellow,
+                          // valueIndicatorTextStyle: TextStyle(color: Colors.white)
+                        ),
+                        child: Slider(
+                          label: "1300.0",
+                          autofocus: true,
+                          value: 1300.0,
+                          // activeColor: Colors.green,
+                          onChanged: (value) {
+                            // setState(() {
+                            //   delay = value.toInt();
+                            //   sendData(delay.toString());
+                            //   print(delay);
+                            // });
+                          },
+                          min: 1001.0,
+                          max: 1500.0,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    '1000',
-                    style: TextStyle(fontWeight: FontWeight.w400),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 0.0,
+                          width: 0.0,
+                        ),
+                        flex: 2,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          '1001',
+                          style: TextStyle(fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          '1500',
+                          style: TextStyle(fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 40.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.yellow,
-                ),
-                SliderTheme(
-                  data: SliderThemeData(
-                    thumbShape: RoundSliderThumbShape(
-                        enabledThumbRadius: 12.0, disabledThumbRadius: 12.0),
-                    overlayShape: RoundSliderOverlayShape(overlayRadius: 12.0),
-                    thumbColor: Colors.white,
-                    overlayColor: Colors.white38,
-                    disabledThumbColor: Colors.white,
-                    // disabledActiveTickMarkColor: Colors.green,
-                    // disabledActiveTrackColor: Colors.green,
-                    activeTrackColor: Colors.yellow,
-                    // inactiveTrackColor: Colors.blue,
-                    trackHeight: 3.0,
-                    showValueIndicator: ShowValueIndicator.always,
-                    // valueIndicatorShape: SliderComponentShape.noThumb,
-                    valueIndicatorColor: Colors.yellow,
-                    // valueIndicatorTextStyle: TextStyle(color: Colors.white)
-                  ),
-                  child: Slider(
-                    label: "1300.0",
-                    autofocus: true,
-                    value: 1300.0,
-                    // activeColor: Colors.green,
-                    onChanged: (value) {
-                      // setState(() {
-                      //   delay = value.toInt();
-                      //   sendData(delay.toString());
-                      //   print(delay);
-                      // });
-                    },
-                    min: 1001.0,
-                    max: 1500.0,
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 115.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    '1001',
-                    style: TextStyle(fontWeight: FontWeight.w400),
+                Container(
+                  margin: EdgeInsets.only(top: 30.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.red,
+                      ),
+                      SliderTheme(
+                        data: SliderThemeData(
+                          thumbShape: RoundSliderThumbShape(
+                              enabledThumbRadius: 12.0,
+                              disabledThumbRadius: 12.0),
+                          overlayShape:
+                              RoundSliderOverlayShape(overlayRadius: 12.0),
+                          thumbColor: Colors.white,
+                          overlayColor: Colors.white38,
+                          disabledThumbColor: Colors.white,
+                          // disabledActiveTickMarkColor: Colors.green,
+                          // disabledActiveTrackColor: Colors.green,
+                          activeTrackColor: Colors.red,
+                          // inactiveTrackColor: Colors.blue,
+                          trackHeight: 3.0,
+                          showValueIndicator: ShowValueIndicator.always,
+                          // valueIndicatorShape: SliderComponentShape.noThumb,
+                          valueIndicatorColor: Colors.red,
+                        ),
+                        child: Slider(
+                          label: "2000.0",
+                          autofocus: true,
+                          value: 2000.0,
+                          // activeColor: Colors.green,
+                          onChanged: (value) {
+                            // setState(() {
+                            //   delay = value.toInt();
+                            //   sendData(delay.toString());
+                            //   print(delay);
+                            // });
+                          },
+                          min: 1501.0,
+                          max: 2500.0,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    '1500',
-                    style: TextStyle(fontWeight: FontWeight.w400),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 40.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.red,
-                ),
-                SliderTheme(
-                  data: SliderThemeData(
-                    thumbShape: RoundSliderThumbShape(
-                        enabledThumbRadius: 12.0, disabledThumbRadius: 12.0),
-                    overlayShape: RoundSliderOverlayShape(overlayRadius: 12.0),
-                    thumbColor: Colors.white,
-                    overlayColor: Colors.white38,
-                    disabledThumbColor: Colors.white,
-                    // disabledActiveTickMarkColor: Colors.green,
-                    // disabledActiveTrackColor: Colors.green,
-                    activeTrackColor: Colors.red,
-                    // inactiveTrackColor: Colors.blue,
-                    trackHeight: 3.0,
-                    showValueIndicator: ShowValueIndicator.always,
-                    // valueIndicatorShape: SliderComponentShape.noThumb,
-                    valueIndicatorColor: Colors.red,
-                  ),
-                  child: Slider(
-                    label: "2000.0",
-                    autofocus: true,
-                    value: 2000.0,
-                    // activeColor: Colors.green,
-                    onChanged: (value) {
-                      // setState(() {
-                      //   delay = value.toInt();
-                      //   sendData(delay.toString());
-                      //   print(delay);
-                      // });
-                    },
-                    min: 1501.0,
-                    max: 2500.0,
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 115.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    '1501',
-                    style: TextStyle(fontWeight: FontWeight.w400),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    '2500',
-                    style: TextStyle(fontWeight: FontWeight.w400),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 0.0,
+                          width: 0.0,
+                        ),
+                        flex: 2,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          '1501',
+                          style: TextStyle(fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          '2500',
+                          style: TextStyle(fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 3.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      //
-                    },
-                    child: Text("Save"),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 3.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        //
+                      },
+                      child: Text("Save"),
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      //
-                    },
-                    child: Text("Factory Default"),
+                  SizedBox(
+                    width: 10.0,
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        //
+                      },
+                      child: Text("Factory Default"),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
