@@ -18,6 +18,45 @@ class Homepage extends StatelessWidget {
     final args = ModalRoute.of(context)!.settings.arguments as String;
     print(args);
     return Scaffold(
+      bottomNavigationBar: Container(
+        color: Colors.white30,
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.white),
+                ),
+                onPressed: () {
+                  // Do nothing
+                },
+                child: Text(
+                  "Config CO2",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            ),
+            Divider(
+              thickness: 2.0,
+              height: 10.0,
+              indent: 0.5,
+              color: Colors.redAccent,
+            ),
+            Expanded(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.white38),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, ConfigWiFiPage.id,
+                      arguments: 'Device');
+                },
+                child: Text("Conf.Wifi"),
+              ),
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.black38,
         title: Text(args),
@@ -407,50 +446,6 @@ class Homepage extends StatelessWidget {
                         //
                       },
                       child: Text("Factory Default"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: Colors.white30,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                      ),
-                      onPressed: () {
-                        // Do nothing
-                      },
-                      child: Text(
-                        "Config CO2",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    thickness: 2.0,
-                    height: 10.0,
-                    indent: 0.5,
-                    color: Colors.redAccent,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white38),
-                      ),
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(
-                            context, ConfigWiFiPage.id,
-                            arguments: 'Device');
-                      },
-                      child: Text("Conf.Wifi"),
                     ),
                   ),
                 ],

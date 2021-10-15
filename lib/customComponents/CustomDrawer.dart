@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:ble_splash_x/screen/Calibration.dart';
+import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -78,7 +80,8 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 ),
               ),
               onTap: () {
-                Navigator.pushReplacementNamed(context, Homepage.id);
+                Navigator.pushReplacementNamed(context, Homepage.id,
+                    arguments: "Device 1");
               },
             ),
             ListTile(
@@ -111,7 +114,8 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 ),
               ),
               onTap: () {
-                Navigator.pushReplacementNamed(context, Homepage.id);
+                Navigator.pushReplacementNamed(context, ConfigWiFiPage.id,
+                    arguments: "Device 1");
               },
             ),
             ListTile(
@@ -144,7 +148,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 ),
               ),
               onTap: () {
-                Navigator.pushReplacementNamed(context, Homepage.id);
+                Navigator.pushReplacementNamed(context, CalibrationPage.id);
               },
             ),
           ],

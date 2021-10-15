@@ -1,3 +1,4 @@
+import 'package:ble_splash_x/screen/Calibration.dart';
 import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:ble_splash_x/screen/discover.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         DiscoverPage.id: (context) => DiscoverPage(),
         Homepage.id: (context) => Homepage(),
         ConfigWiFiPage.id: (context) => ConfigWiFiPage(),
-        // DashBoard.id: (context) => DashBoard(),
+        CalibrationPage.id: (context) => CalibrationPage(),
       },
     );
   }
