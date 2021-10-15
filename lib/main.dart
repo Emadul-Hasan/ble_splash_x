@@ -1,3 +1,4 @@
+import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:ble_splash_x/screen/discover.dart';
 import 'package:ble_splash_x/screen/splash.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         SplashScreen.id: (context) => SplashScreen(),
         DiscoverPage.id: (context) => DiscoverPage(),
         Homepage.id: (context) => Homepage(),
-        // ClockOut.id: (context) => ClockOut(),
+        ConfigWiFiPage.id: (context) => ConfigWiFiPage(),
         // DashBoard.id: (context) => DashBoard(),
       },
     );

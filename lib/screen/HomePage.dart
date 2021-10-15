@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
+import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -424,7 +425,7 @@ class Homepage extends StatelessWidget {
                             MaterialStateProperty.all(Colors.white),
                       ),
                       onPressed: () {
-                        //
+                        // Do nothing
                       },
                       child: Text(
                         "Config CO2",
@@ -445,7 +446,9 @@ class Homepage extends StatelessWidget {
                             MaterialStateProperty.all(Colors.white38),
                       ),
                       onPressed: () {
-                        //
+                        Navigator.pushReplacementNamed(
+                            context, ConfigWiFiPage.id,
+                            arguments: 'Device');
                       },
                       child: Text("Conf.Wifi"),
                     ),
