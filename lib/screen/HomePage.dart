@@ -71,19 +71,13 @@ class Homepage extends StatelessWidget {
           ),
           Expanded(
             flex: 4,
-            child: Container(
-              padding: EdgeInsets.only(bottom: 10.0, left: 40, right: 40.0),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black12,
-                  width: 5.0,
-                ),
-              ),
+            child: Card(
               child: Container(
-                padding: EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
+                width: 300.0,
+                padding: EdgeInsets.only(top: 30.0, left: 20.0, right: 20.0),
                 decoration: BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(
+                    top: BorderSide(
                       color: Colors.green,
                       width: 3.0,
                     ),
@@ -152,43 +146,47 @@ class Homepage extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Center(
-              child: Container(
-                padding: EdgeInsets.only(
-                    top: 10.0, bottom: 10.0, left: 65.0, right: 65.0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black12,
-                    width: 5.0,
-                  ),
-                ),
-                child: RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                        text: "Set CO",
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                        )),
-                    TextSpan(
-                      text: '2',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
-                        fontFeatures: [
-                          FontFeature.subscripts(),
-                        ],
+              child: Card(
+                child: Container(
+                  padding: EdgeInsets.only(
+                      top: 10.0, bottom: 10.0, left: 70.0, right: 70.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.black38,
+                        width: 3.0,
                       ),
                     ),
-                    TextSpan(
-                        text: ' ranges',
+                  ),
+                  child: RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: "Set CO",
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      TextSpan(
+                        text: '2',
                         style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w400,
                           color: Colors.black,
-                        ))
-                  ]),
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500,
+                          fontFeatures: [
+                            FontFeature.subscripts(),
+                          ],
+                        ),
+                      ),
+                      TextSpan(
+                          text: ' ranges',
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ))
+                    ]),
+                  ),
                 ),
               ),
             ),
@@ -238,7 +236,7 @@ class Homepage extends StatelessWidget {
                             // });
                           },
                           min: 400.0,
-                          max: 1000.0,
+                          max: 2000.0,
                         ),
                       ),
                     ],
@@ -265,7 +263,7 @@ class Homepage extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          '1000',
+                          '2000',
                           style: TextStyle(fontWeight: FontWeight.w400),
                         ),
                       ),
@@ -313,7 +311,7 @@ class Homepage extends StatelessWidget {
                             // });
                           },
                           min: 1001.0,
-                          max: 1500.0,
+                          max: 3000.0,
                         ),
                       )
                     ],
@@ -340,7 +338,7 @@ class Homepage extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          '1500',
+                          '3000',
                           style: TextStyle(fontWeight: FontWeight.w400),
                         ),
                       ),
@@ -414,7 +412,7 @@ class Homepage extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          '2500',
+                          '10000',
                           style: TextStyle(fontWeight: FontWeight.w400),
                         ),
                       ),

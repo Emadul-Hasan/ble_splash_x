@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class DiscoverPage extends StatefulWidget {
   static const String id = 'DiscoverPage';
@@ -12,14 +13,35 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  List device = [
-    'Device1',
-    'Device2',
-    'Device3',
-    'Device4',
-    'Device5',
-    'Device6',
-  ];
+  List device = [];
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+
+  void scanForBluetoothDevice() {
+    // Start scanning
+    flutterBlue.startScan(timeout: Duration(seconds: 5));
+
+// Listen to scan results
+    var subscription = flutterBlue.scanResults.listen((results) {
+      if (results.length == 0) {
+        setState(() {});
+      }
+      // do something with scan results
+      for (ScanResult r in results) {
+        print('${r.device.name} found! rssi: ${r.rssi}');
+        setState(() {
+          if (r.device.name == '') {
+          } else {
+            device.add(r.device.name);
+            device = device.toSet().toList();
+          }
+        });
+      }
+    });
+
+// Stop scanning
+    flutterBlue.stopScan();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,7 +113,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  //Do Scan here
+                  setState(() {
+                    scanForBluetoothDevice();
+                  });
                 },
                 child: RichText(
                   text: TextSpan(children: [
