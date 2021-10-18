@@ -13,7 +13,8 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  List device = [];
+  List scannedDevicesName = [];
+  List<BluetoothDevice> scannedDevice = [];
   FlutterBlue flutterBlue = FlutterBlue.instance;
 
   void scanForBluetoothDevice() {
@@ -31,8 +32,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
         setState(() {
           if (r.device.name == '') {
           } else {
-            device.add(r.device.name);
-            device = device.toSet().toList();
+            scannedDevicesName.add(r.device.name);
+            scannedDevicesName = scannedDevicesName.toSet().toList();
+            scannedDevice.add(r.device);
+            scannedDevice = scannedDevice.toSet().toList();
           }
         });
       }
@@ -112,6 +115,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
               height: 30.0,
             ),
             ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith(
+                        (states) => Colors.black)),
                 onPressed: () {
                   setState(() {
                     scanForBluetoothDevice();
@@ -149,28 +155,43 @@ class _DiscoverPageState extends State<DiscoverPage> {
               child: ListView.builder(
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
-                    margin: EdgeInsets.only(left: 5.0, right: 5.0),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.pushReplacementNamed(context, Homepage.id,
-                            arguments: device[0]);
-                        // Navigator.pushNamed(context, RemainingSubTask.id,
-                        //     arguments: listOfTask[index].id);
-                      },
-                      minLeadingWidth: 2.0,
-                      horizontalTitleGap: 5.0,
-                      leading: Icon(
-                        Icons.bluetooth,
-                        color: Colors.black,
-                      ),
-                      title: Text(
-                        device[index],
-                        style: TextStyle(fontSize: 15.0, color: Colors.black),
-                      ),
-                    ),
-                  );
+                      margin: EdgeInsets.only(left: 5.0, right: 5.0),
+                      child: ListTile(
+                        title: Text(scannedDevicesName[index]),
+                        trailing: StreamBuilder<BluetoothDeviceState>(
+                            stream: scannedDevice[index].state,
+                            builder: (c, snapshot) {
+                              if (snapshot.data ==
+                                  BluetoothDeviceState.connected) {
+                                return ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.resolveWith(
+                                                (states) => Colors.black)),
+                                    onPressed: () async {
+                                      print("Navigate");
+                                      await scannedDevice[index].disconnect();
+                                    },
+                                    child: Text("Connected"));
+                              }
+                              return ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Colors.black)),
+                                  onPressed: () async {
+                                    await scannedDevice[index].connect();
+                                  },
+                                  child: Text("Tap to Connect"));
+                            }),
+                        onTap: () async {
+                          await scannedDevice[index].connect();
+                          Navigator.pushReplacementNamed(context, Homepage.id,
+                              arguments: scannedDevice[index]);
+                        },
+                      ));
                 },
-                itemCount: device.length,
+                itemCount: scannedDevicesName.length,
               ),
             ),
             Container(
