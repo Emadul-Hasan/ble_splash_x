@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class DiscoverPage extends StatefulWidget {
   static const String id = 'DiscoverPage';
@@ -16,6 +18,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
   List scannedDevicesName = [];
   List<BluetoothDevice> scannedDevice = [];
   FlutterBlue flutterBlue = FlutterBlue.instance;
+
+  void loadingIgnite() async {
+    EasyLoading.instance.maskType = EasyLoadingMaskType.black;
+    EasyLoading.instance.loadingStyle = EasyLoadingStyle.dark;
+    EasyLoading.instance.indicatorType = EasyLoadingIndicatorType.circle;
+    await EasyLoading.show(status: 'loading...');
+  }
 
   void scanForBluetoothDevice() {
     // Start scanning
@@ -119,8 +128,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     backgroundColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.black)),
                 onPressed: () {
+                  loadingIgnite();
                   setState(() {
                     scanForBluetoothDevice();
+                    Timer(Duration(seconds: 4), () {
+                      EasyLoading.dismiss();
+                    });
                   });
                 },
                 child: RichText(
@@ -169,8 +182,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                             MaterialStateProperty.resolveWith(
                                                 (states) => Colors.black)),
                                     onPressed: () async {
-                                      print("Navigate");
-                                      await scannedDevice[index].disconnect();
+                                      loadingIgnite();
+                                      Timer(Duration(seconds: 2), () {
+                                        Navigator.pushReplacementNamed(
+                                            context, Homepage.id,
+                                            arguments: scannedDevice[index]);
+                                        EasyLoading.dismiss();
+                                      });
                                     },
                                     child: Text("Connected"));
                               }
@@ -185,9 +203,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                   child: Text("Tap to Connect"));
                             }),
                         onTap: () async {
+                          loadingIgnite();
                           await scannedDevice[index].connect();
-                          Navigator.pushReplacementNamed(context, Homepage.id,
-                              arguments: scannedDevice[index]);
+                          Timer(Duration(seconds: 2), () {
+                            Navigator.pushReplacementNamed(context, Homepage.id,
+                                arguments: scannedDevice[index]);
+                            EasyLoading.dismiss();
+                          });
                         },
                       ));
                 },
