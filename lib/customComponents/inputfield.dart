@@ -6,12 +6,13 @@ class Inputfield extends StatelessWidget {
       {required this.margin,
       required this.function,
       required this.obscuretext,
-      required this.keyBoardtype});
+      required this.keyBoardtype,
+      required this.controller});
 
   final double margin;
   final bool obscuretext;
   final void Function(String) function;
-
+  final TextEditingController controller;
   final TextInputType keyBoardtype;
 
   @override
@@ -28,6 +29,7 @@ class Inputfield extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: TextField(
+        controller: controller,
         keyboardType: keyBoardtype,
         obscureText: obscuretext,
         onChanged: function,

@@ -37,7 +37,7 @@ class _AppHomePageState extends State<AppHomePage> {
   late Stream<List> stream;
   late BluetoothCharacteristic targetCharacteristics;
 
-  String co2 = "...";
+  String co2 = "000.00";
   double greenMin = 400;
   double greenMax = 1000.0;
   double greenMaxRange = 2000.0;
@@ -47,6 +47,8 @@ class _AppHomePageState extends State<AppHomePage> {
   double redMin = 1501.0;
   double redMaxRange = 10000;
   double redMax = 10000;
+
+  Color barColor = Colors.green;
 
   late String state;
   int flag = 0;
@@ -177,7 +179,7 @@ class _AppHomePageState extends State<AppHomePage> {
                 ),
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, ConfigWiFiPage.id,
-                      arguments: 'Device');
+                      arguments: widget.device);
                 },
                 child: Text("Conf.Wifi"),
               ),
@@ -188,7 +190,9 @@ class _AppHomePageState extends State<AppHomePage> {
       appBar: AppBar(
         title: Text(widget.device.name),
       ),
-      drawer: DrawerCustom(),
+      drawer: DrawerCustom(
+        device: widget.device,
+      ),
       body: isReady == false
           ? Center(
               child: Text("Reading Data...."),
@@ -215,6 +219,14 @@ class _AppHomePageState extends State<AppHomePage> {
                       print(_data);
                       setState(() {
                         co2 = _data[0];
+                        double value = double.parse(co2);
+                        if (value < yellowF) {
+                          barColor = Colors.green;
+                        } else if (value < redMin) {
+                          barColor = Colors.yellow;
+                        } else {
+                          barColor = Colors.red;
+                        }
                       });
                     } catch (e) {
                       print(e);
@@ -652,17 +664,6 @@ class _AppHomePageState extends State<AppHomePage> {
                       ),
                     ],
                   );
-                  //   Container(
-                  //   child: snapshot.hasData == null
-                  //       ? Center(
-                  //           child: CircularProgressIndicator(
-                  //             backgroundColor: Colors.lightBlueAccent,
-                  //           ),
-                  //         )
-                  //       : Column(
-                  //           children: [],
-                  //         ),
-                  // );
                 },
               ),
             ),
@@ -672,6 +673,6 @@ class _AppHomePageState extends State<AppHomePage> {
   @override
   void dispose() {
     super.dispose();
-    widget.device.disconnect();
+    // widget.device.disconnect();
   }
 }
