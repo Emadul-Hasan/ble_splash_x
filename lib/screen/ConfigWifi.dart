@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:ble_splash_x/constants/constant.dart';
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
 import 'package:ble_splash_x/customComponents/inputfield.dart';
 import 'package:ble_splash_x/screen/HomePage.dart';
+import 'package:ble_splash_x/screen/qr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -45,6 +45,8 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   late String oldSSIDInput;
   late String newSSID;
   late String newPass;
+
+  List<String> WifiCred = [];
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
   TextEditingController controller3 = TextEditingController();
@@ -58,8 +60,8 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
       _pop();
       return;
     }
-
-    new Timer(const Duration(seconds: 15), () {
+    discoverServices();
+    new Timer(const Duration(seconds: 3), () {
       if (!isReady) {
         disconnectFromDevice();
         _pop();
@@ -95,6 +97,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
             setState(() {
               isReady = true;
+
               // writeData('1');
             });
           }
@@ -126,6 +129,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   @override
   void initState() {
     super.initState();
+
     discoverServices();
     // connectToDevice();
   }
@@ -348,14 +352,44 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                   MdiIcons.qrcodeScan,
                                   size: 30.0,
                                 ),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  var result = await Navigator.pushNamed(
+                                      context, QRViewExample.id);
+                                  print(
+                                      'RESULT################################################');
+                                  print(result.runtimeType);
+                                  WifiCred = result.toString().split(";");
+                                  String ssid = WifiCred[1];
+                                  List<String> getSSID = ssid.split(":");
+                                  newSSID = getSSID[1];
+                                  String pass = WifiCred[2];
+                                  List<String> getPASS = pass.split(":");
+                                  newPass = getPASS[1];
+                                  controller2.text = newPass;
+                                  controller3.text = newSSID;
+                                },
                               ),
                               TextButton(
                                 child: Text(
                                   "Scan QR Code",
                                   style: TextStyle(color: Colors.black),
                                 ),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  var result = await Navigator.pushNamed(
+                                      context, QRViewExample.id);
+                                  print(
+                                      'RESULT################################################');
+                                  print(result.runtimeType);
+                                  WifiCred = result.toString().split(";");
+                                  String ssid = WifiCred[1];
+                                  List<String> getSSID = ssid.split(":");
+                                  newSSID = getSSID[1];
+                                  String pass = WifiCred[2];
+                                  List<String> getPASS = pass.split(":");
+                                  newPass = getPASS[1];
+                                  controller2.text = newPass;
+                                  controller3.text = newSSID;
+                                },
                               ),
                             ],
                           ),

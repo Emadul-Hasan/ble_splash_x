@@ -26,6 +26,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
     await EasyLoading.show(status: 'loading...');
   }
 
+  Future<bool> _checkDeviceBluetoothIsOn() async {
+    return await flutterBlue.isOn;
+  }
+
   void scanForBluetoothDevice() {
     // Start scanning
     flutterBlue.startScan(timeout: Duration(seconds: 5));
@@ -127,14 +131,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.black)),
-                onPressed: () {
-                  loadingIgnite();
-                  setState(() {
-                    scanForBluetoothDevice();
-                    Timer(Duration(seconds: 4), () {
-                      EasyLoading.dismiss();
+                onPressed: () async {
+                  var checkS = await _checkDeviceBluetoothIsOn();
+                  if (!checkS) {
+                    await EasyLoading.showInfo("Turn On Bluetooth");
+                  } else {
+                    loadingIgnite();
+                    setState(() {
+                      scanForBluetoothDevice();
+                      Timer(Duration(seconds: 4), () {
+                        EasyLoading.dismiss();
+                      });
                     });
-                  });
+                  }
                 },
                 child: RichText(
                   text: TextSpan(children: [
@@ -184,13 +193,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                     onPressed: () async {
                                       loadingIgnite();
                                       Timer(Duration(seconds: 2), () {
-                                        Navigator.pushReplacementNamed(
+                                        Navigator.pushNamed(
                                             context, Homepage.id,
                                             arguments: scannedDevice[index]);
                                         EasyLoading.dismiss();
                                       });
                                     },
-                                    child: Text("Connected"));
+                                    child: Text("Open"));
                               }
                               return ElevatedButton(
                                   style: ButtonStyle(
@@ -206,7 +215,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           loadingIgnite();
                           await scannedDevice[index].connect();
                           Timer(Duration(seconds: 2), () {
-                            Navigator.pushReplacementNamed(context, Homepage.id,
+                            Navigator.pushNamed(context, Homepage.id,
                                 arguments: scannedDevice[index]);
                             EasyLoading.dismiss();
                           });

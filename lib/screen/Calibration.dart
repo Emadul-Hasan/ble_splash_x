@@ -44,8 +44,8 @@ class _CalibrationPage1State extends State<CalibrationPage1>
       _pop();
       return;
     }
-
-    new Timer(const Duration(seconds: 15), () {
+    discoverServices();
+    new Timer(const Duration(seconds: 3), () {
       if (!isReady) {
         disconnectFromDevice();
         _pop();
@@ -119,22 +119,6 @@ class _CalibrationPage1State extends State<CalibrationPage1>
     });
     super.initState();
   }
-
-  List<String> monthString = [
-    'Month',
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
 
   @override
   Widget build(BuildContext context) {

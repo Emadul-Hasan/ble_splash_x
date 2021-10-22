@@ -9,10 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-class Homepage extends StatelessWidget {
+class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
 
   static const String id = 'HomePage';
+
+  @override
+  _HomepageState createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as BluetoothDevice;
@@ -57,8 +63,10 @@ class _AppHomePageState extends State<AppHomePage> {
       _pop();
       return;
     }
+    // await widget.device.connect();
+    discoverServices();
 
-    new Timer(const Duration(seconds: 15), () {
+    new Timer(const Duration(seconds: 3), () {
       if (!isReady) {
         disconnectFromDevice();
         _pop();
@@ -91,19 +99,13 @@ class _AppHomePageState extends State<AppHomePage> {
             characteristic.setNotifyValue(!characteristic.isNotifying);
             stream = characteristic.value;
             targetCharacteristics = characteristic;
-
             setState(() {
               isReady = true;
-              // writeData('1');
             });
           }
         });
       }
     });
-
-    if (!isReady) {
-      // _pop()
-    }
   }
 
   _pop() {
@@ -125,8 +127,8 @@ class _AppHomePageState extends State<AppHomePage> {
   @override
   void initState() {
     super.initState();
-    discoverServices();
-    // connectToDevice();
+    // discoverServices();
+    connectToDevice();
   }
 
   void loadingIgnite() async {
@@ -231,6 +233,11 @@ class _AppHomePageState extends State<AppHomePage> {
                     } catch (e) {
                       print(e);
                     }
+                  } else {
+                    isReady = false;
+                    widget.device.connect(
+                        timeout: Duration(seconds: 6), autoConnect: true);
+                    discoverServices();
                   }
 
                   return Column(

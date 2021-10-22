@@ -6,6 +6,8 @@ import 'package:ble_splash_x/screen/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import 'screen/qr.dart';
+
 void main() {
   runApp(MyApp());
   configLoading();
@@ -44,6 +46,7 @@ class MyApp extends StatelessWidget {
         Homepage.id: (context) => Homepage(),
         ConfigWiFiPage.id: (context) => ConfigWiFiPage(),
         CalibrationPage.id: (context) => CalibrationPage(),
+        QRViewExample.id: (context) => QRViewExample(),
       },
     );
   }
