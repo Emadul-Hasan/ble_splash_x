@@ -233,11 +233,6 @@ class _AppHomePageState extends State<AppHomePage> {
                     } catch (e) {
                       print(e);
                     }
-                  } else {
-                    isReady = false;
-                    widget.device.connect(
-                        timeout: Duration(seconds: 6), autoConnect: true);
-                    discoverServices();
                   }
 
                   return Column(
