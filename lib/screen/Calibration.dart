@@ -157,14 +157,11 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                           var x = _dataParser(snapshot.data as List<int>);
                           var _data = x.split('+');
                           print(_data);
-                          setState(() {
-                            if (_data[0] == 'C') {
-                              setState(() {
-                                message = _data[1];
-                                loadingIgnite();
-                              });
-                            }
-                          });
+
+                          if (_data[0] == 'C') {
+                            message = _data[1];
+                            loadingIgnite();
+                          }
                         } catch (e) {
                           print(e);
                         }

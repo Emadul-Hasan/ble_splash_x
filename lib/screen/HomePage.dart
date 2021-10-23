@@ -140,15 +140,6 @@ class _AppHomePageState extends State<AppHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isReady == false) {
-      setState(() {
-        loadingIgnite();
-      });
-    } else {
-      setState(() {
-        EasyLoading.dismiss();
-      });
-    }
     return Scaffold(
       bottomNavigationBar: Container(
         color: Colors.white30,
@@ -219,17 +210,16 @@ class _AppHomePageState extends State<AppHomePage> {
                       var x = _dataParser(snapshot.data as List<int>);
                       var _data = x.split('+');
                       print(_data);
-                      setState(() {
-                        co2 = _data[0];
-                        double value = double.parse(co2);
-                        if (value < yellowF) {
-                          barColor = Colors.green;
-                        } else if (value < redMin) {
-                          barColor = Colors.yellow;
-                        } else {
-                          barColor = Colors.red;
-                        }
-                      });
+
+                      co2 = _data[0];
+                      double value = double.parse(co2);
+                      if (value < yellowF) {
+                        barColor = Colors.green;
+                      } else if (value < redMin) {
+                        barColor = Colors.yellow;
+                      } else {
+                        barColor = Colors.red;
+                      }
                     } catch (e) {
                       print(e);
                     }
@@ -252,7 +242,7 @@ class _AppHomePageState extends State<AppHomePage> {
                             decoration: BoxDecoration(
                               border: Border(
                                 top: BorderSide(
-                                  color: Colors.green,
+                                  color: barColor,
                                   width: 3.0,
                                 ),
                               ),

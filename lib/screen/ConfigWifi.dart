@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
+
 import 'package:ble_splash_x/constants/constant.dart';
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
 import 'package:ble_splash_x/customComponents/inputfield.dart';
@@ -215,15 +216,11 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                       });
 
                       if (_data[0] == '1') {
-                        setState(() {
-                          oldSSID = _data[1];
-                          connected = true;
-                        });
+                        oldSSID = _data[1];
+                        connected = true;
                       } else if (_data[0] == "0") {
-                        setState(() {
-                          oldSSID = _data[1];
-                          connected = false;
-                        });
+                        oldSSID = _data[1];
+                        connected = false;
                       }
                     } catch (e) {
                       print(e);
@@ -399,13 +396,11 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                               print(oldSSID);
                               print(oldSSIDInput);
                               if (oldSSID == oldSSIDInput) {
-                                setState(() {
-                                  sendData("$newSSID+$newPass");
-                                  loadingIgnite();
-                                  controller1.clear();
-                                  controller2.clear();
-                                  controller3.clear();
-                                });
+                                sendData("$newSSID+$newPass");
+                                loadingIgnite();
+                                controller1.clear();
+                                controller2.clear();
+                                controller3.clear();
                               }
                             },
                             child: Text("Save")),
