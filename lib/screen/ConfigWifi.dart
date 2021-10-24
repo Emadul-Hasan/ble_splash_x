@@ -13,6 +13,8 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import 'discover.dart';
+
 class ConfigWiFiPage extends StatelessWidget {
   const ConfigWiFiPage({Key? key}) : super(key: key);
   static const String id = 'ConfigWifi';
@@ -127,6 +129,18 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
     await targetCharacteristics.write(bytes);
   }
 
+  void checkConnectionState() {
+    widget.device.state.listen((event) async {
+      if (event == BluetoothDeviceState.disconnected) {
+        print("disconnected");
+        EasyLoading.showInfo("Device Disconnected");
+        Timer(Duration(seconds: 2), () {
+          Navigator.pushReplacementNamed(context, DiscoverPage.id);
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -146,7 +160,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
             Expanded(
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.white38),
+                  backgroundColor: MaterialStateProperty.all(Colors.black26),
                 ),
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, Homepage.id,
@@ -154,7 +168,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                 },
                 child: Text(
                   "Config CO2",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -171,7 +185,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                 ),
                 onPressed: () {},
                 child: Text(
-                  "Conf.Wifi",
+                  "Config Wifi",
                   style: TextStyle(color: Colors.black),
                 ),
               ),
@@ -180,7 +194,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
         ),
       ),
       appBar: AppBar(
-        title: Text("Wifi Config"),
+        title: Text(widget.device.name),
         backgroundColor: Colors.black38,
       ),
       drawer: DrawerCustom(
@@ -226,6 +240,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                       print(e);
                     }
                   }
+                  checkConnectionState();
 
                   return SingleChildScrollView(
                     reverse: true,

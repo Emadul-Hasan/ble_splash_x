@@ -56,6 +56,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
 // Stop scanning
     flutterBlue.stopScan();
+    // subscription.cancel();
+  }
+
+  @override
+  void dispose() {
+    scannedDevice.clear();
+    scannedDevicesName.clear();
+
+    super.dispose();
   }
 
   @override

@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
 import 'package:ble_splash_x/screen/ConfigWifi.dart';
+import 'package:ble_splash_x/screen/discover.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -112,8 +113,6 @@ class _AppHomePageState extends State<AppHomePage> {
     Navigator.of(context).pop(true);
   }
 
-  //
-
   String _dataParser(List<int> datafromdevice) {
     return utf8.decode(datafromdevice);
   }
@@ -122,6 +121,18 @@ class _AppHomePageState extends State<AppHomePage> {
     if (targetCharacteristics == null) return;
     List<int> bytes = utf8.encode(data);
     await targetCharacteristics.write(bytes);
+  }
+
+  void checkConnectionState() {
+    widget.device.state.listen((event) async {
+      if (event == BluetoothDeviceState.disconnected) {
+        print("disconnected");
+        EasyLoading.showInfo("Device Disconnected");
+        Timer(Duration(seconds: 2), () {
+          Navigator.pushReplacementNamed(context, DiscoverPage.id);
+        });
+      }
+    });
   }
 
   @override
@@ -168,13 +179,13 @@ class _AppHomePageState extends State<AppHomePage> {
             Expanded(
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.white38),
+                  backgroundColor: MaterialStateProperty.all(Colors.black26),
                 ),
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, ConfigWiFiPage.id,
                       arguments: widget.device);
                 },
-                child: Text("Conf.Wifi"),
+                child: Text("Config Wifi"),
               ),
             ),
           ],
@@ -182,6 +193,7 @@ class _AppHomePageState extends State<AppHomePage> {
       ),
       appBar: AppBar(
         title: Text(widget.device.name),
+        backgroundColor: Colors.black38,
       ),
       drawer: DrawerCustom(
         device: widget.device,
@@ -224,14 +236,11 @@ class _AppHomePageState extends State<AppHomePage> {
                       print(e);
                     }
                   }
+                  checkConnectionState();
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        height: 10.0,
-                        width: double.infinity,
-                      ),
                       Expanded(
                         flex: 4,
                         child: Card(
@@ -271,7 +280,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                       ),
                                     ),
                                     TextSpan(
-                                        text: ' Value',
+                                        text: ' Value (in ppm)',
                                         style: TextStyle(
                                           fontSize: 28.0,
                                           fontWeight: FontWeight.w400,
@@ -356,251 +365,6 @@ class _AppHomePageState extends State<AppHomePage> {
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 7,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Green .................
-                            Container(
-                              margin: EdgeInsets.only(top: 30.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: Colors.green,
-                                  ),
-                                  SliderTheme(
-                                    data: SliderThemeData(
-                                      thumbShape: RoundSliderThumbShape(
-                                          enabledThumbRadius: 12.0,
-                                          disabledThumbRadius: 12.0),
-                                      overlayShape: RoundSliderOverlayShape(
-                                          overlayRadius: 12.0),
-                                      thumbColor: Colors.white,
-                                      overlayColor: Colors.white38,
-                                      disabledThumbColor: Colors.white,
-                                      // disabledActiveTickMarkColor: Colors.green,
-                                      // disabledActiveTrackColor: Colors.green,
-                                      activeTrackColor: Colors.green,
-                                      // inactiveTrackColor: Colors.blue,
-                                      trackHeight: 3.0,
-                                      showValueIndicator:
-                                          ShowValueIndicator.always,
-                                      // valueIndicatorShape: SliderComponentShape.noThumb,
-                                      valueIndicatorColor: Colors.green,
-                                    ),
-                                    child: Slider(
-                                      divisions: 1600,
-                                      label: greenMax.toString(),
-                                      autofocus: true,
-                                      value: greenMax,
-                                      // activeColor: Colors.green,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          flag = 1;
-                                          greenMax = value;
-                                        });
-                                      },
-                                      min: 400.0,
-                                      max: greenMaxRange,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 0.0,
-                                      width: 0.0,
-                                    ),
-                                    flex: 2,
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      '400',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      greenMaxRange.toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Yellow ...........
-                            Container(
-                              margin: EdgeInsets.only(top: 30.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: Colors.yellow,
-                                  ),
-                                  SliderTheme(
-                                    data: SliderThemeData(
-                                      thumbShape: RoundSliderThumbShape(
-                                          enabledThumbRadius: 12.0,
-                                          disabledThumbRadius: 12.0),
-                                      overlayShape: RoundSliderOverlayShape(
-                                          overlayRadius: 12.0),
-                                      thumbColor: Colors.white,
-                                      overlayColor: Colors.white38,
-                                      disabledThumbColor: Colors.white,
-                                      // disabledActiveTickMarkColor: Colors.green,
-                                      // disabledActiveTrackColor: Colors.green,
-                                      activeTrackColor: Colors.yellow,
-                                      // inactiveTrackColor: Colors.blue,
-                                      trackHeight: 3.0,
-                                      showValueIndicator:
-                                          ShowValueIndicator.always,
-                                      // valueIndicatorShape: SliderComponentShape.noThumb,
-                                      valueIndicatorColor: Colors.yellow,
-                                      // valueIndicatorTextStyle: TextStyle(color: Colors.white)
-                                    ),
-                                    child: Slider(
-                                      divisions: 3000 - yellowF.round(),
-                                      label: yellowMax.toString(),
-                                      autofocus: true,
-                                      value: yellowMax,
-                                      // activeColor: Colors.green,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          flag = 1;
-                                          yellowMax = value;
-                                        });
-                                      },
-                                      min: yellowF,
-                                      max: yellowMaxRange,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 0.0,
-                                      width: 0.0,
-                                    ),
-                                    flex: 2,
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      "$yellowF",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      yellowMaxRange.toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            //Red
-                            Container(
-                              margin: EdgeInsets.only(top: 30.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                  ),
-                                  SliderTheme(
-                                    data: SliderThemeData(
-                                      thumbShape: RoundSliderThumbShape(
-                                          enabledThumbRadius: 12.0,
-                                          disabledThumbRadius: 12.0),
-                                      overlayShape: RoundSliderOverlayShape(
-                                          overlayRadius: 12.0),
-                                      thumbColor: Colors.white,
-                                      overlayColor: Colors.white38,
-                                      disabledThumbColor: Colors.white,
-                                      // disabledActiveTickMarkColor: Colors.green,
-                                      // disabledActiveTrackColor: Colors.green,
-                                      activeTrackColor: Colors.red,
-                                      // inactiveTrackColor: Colors.blue,
-                                      trackHeight: 3.0,
-                                      showValueIndicator:
-                                          ShowValueIndicator.always,
-                                      // valueIndicatorShape: SliderComponentShape.noThumb,
-                                      valueIndicatorColor: Colors.red,
-                                    ),
-                                    child: Slider(
-                                      divisions: 10000 - redMin.round(),
-                                      label: redMax.toString(),
-                                      autofocus: true,
-                                      value: redMax,
-                                      // activeColor: Colors.green,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          flag = 1;
-                                          redMax = value;
-                                        });
-                                      },
-                                      min: redMin,
-                                      max: redMaxRange,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 0.0,
-                                      width: 0.0,
-                                    ),
-                                    flex: 2,
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      '$redMin',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      redMaxRange.toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                       Expanded(

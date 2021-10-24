@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import 'discover.dart';
+
 class CalibrationPage extends StatelessWidget {
   const CalibrationPage({Key? key}) : super(key: key);
   static const id = "Calibration";
@@ -120,11 +122,23 @@ class _CalibrationPage1State extends State<CalibrationPage1>
     super.initState();
   }
 
+  void checkConnectionState() {
+    widget.device.state.listen((event) async {
+      if (event == BluetoothDeviceState.disconnected) {
+        print("disconnected");
+        EasyLoading.showInfo("Device Disconnected");
+        Timer(Duration(seconds: 2), () {
+          Navigator.pushReplacementNamed(context, DiscoverPage.id);
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Calibrate Device"),
+        title: Text(widget.device.name),
         backgroundColor: Colors.black38,
       ),
       drawer: DrawerCustom(
@@ -166,6 +180,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                           print(e);
                         }
                       }
+                      checkConnectionState();
 
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
