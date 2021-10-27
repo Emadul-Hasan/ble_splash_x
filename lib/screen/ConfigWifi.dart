@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:ble_splash_x/constants/constant.dart';
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
 import 'package:ble_splash_x/customComponents/inputfield.dart';
+import 'package:ble_splash_x/customComponents/wifiStatusText.dart';
 import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:ble_splash_x/screen/qr.dart';
 import 'package:flutter/cupertino.dart';
@@ -100,8 +100,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
             setState(() {
               isReady = true;
-
-              // writeData('1');
+              print("Trying.........");
             });
           }
         });
@@ -141,14 +140,32 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
     });
   }
 
+  void scanData() async {
+    var result = await Navigator.pushNamed(context, QRViewExample.id,
+        arguments: widget.device);
+    print('RESULT################################################');
+    print(result.runtimeType);
+    WifiCred = result.toString().split(";");
+    String ssid = WifiCred[1];
+    List<String> getSSID = ssid.split(":");
+    newSSID = getSSID[1];
+    String pass = WifiCred[2];
+    List<String> getPASS = pass.split(":");
+    newPass = getPASS[1];
+    controller2.text = newPass;
+    controller3.text = newSSID;
+  }
+
   @override
   void initState() {
     super.initState();
-
     discoverServices();
+
     // connectToDevice();
   }
 
+  int xt = 0;
+  String network = "Unknown";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,7 +226,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                 stream: stream,
                 builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
                   if (snapshot.hasError) {
-                    Timer(Duration(seconds: 30), () {
+                    Timer(Duration(seconds: 4), () {
                       print('done');
                     });
                     return Center(
@@ -221,20 +238,24 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
                   if (snapshot.connectionState == ConnectionState.active) {
                     try {
+                      while (xt < 1) {
+                        sendData("SSID+Pass");
+                        xt = 1;
+                      }
                       var x = _dataParser(snapshot.data as List<int>);
                       var _data = x.split('+');
                       print(_data);
-
-                      Future.delayed(Duration(seconds: 4), () {
-                        sendData("SSID+Pass");
-                      });
-
                       if (_data[0] == '1') {
-                        oldSSID = _data[1];
+                        controller1.text = _data[1];
                         connected = true;
                       } else if (_data[0] == "0") {
                         oldSSID = _data[1];
                         connected = false;
+                      }
+                      if (_data[2] == "OK") {
+                        network = "OK";
+                      } else if (_data[2] == "NOK") {
+                        network = "NOT OK";
                       }
                     } catch (e) {
                       print(e);
@@ -247,62 +268,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                     child: Column(
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          // mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 30.0,
-                              width: double.infinity,
-                            ),
-                            Icon(
-                              connected
-                                  ? Icons.wifi_outlined
-                                  : Icons.signal_wifi_off_outlined,
-                              size: 60.0,
-                              color: Colors.black38,
-                            ),
-                            Container(
-                              width: 200.0,
-                              padding: EdgeInsets.only(
-                                  left: 20.0,
-                                  right: 20.0,
-                                  top: 20.0,
-                                  bottom: 20.0),
-                              child: RichText(
-                                text: TextSpan(children: [
-                                  TextSpan(
-                                      text: "CO",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                  TextSpan(
-                                    text: '2',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w500,
-                                      fontFeatures: [
-                                        FontFeature.subscripts(),
-                                      ],
-                                    ),
-                                  ),
-                                  TextSpan(
-                                      text: connected
-                                          ? ' Device is connected to the internet'
-                                          : ' Device is not connected to the internet',
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
-                                      ))
-                                ]),
-                              ),
-                            ),
-                          ],
-                        ),
+                        WiFiStatusText(connected: connected, network: network),
                         Column(
                           children: [
                             Container(
@@ -364,59 +330,64 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                   MdiIcons.qrcodeScan,
                                   size: 30.0,
                                 ),
-                                onPressed: () async {
-                                  var result = await Navigator.pushNamed(
-                                      context, QRViewExample.id);
-                                  print(
-                                      'RESULT################################################');
-                                  print(result.runtimeType);
-                                  WifiCred = result.toString().split(";");
-                                  String ssid = WifiCred[1];
-                                  List<String> getSSID = ssid.split(":");
-                                  newSSID = getSSID[1];
-                                  String pass = WifiCred[2];
-                                  List<String> getPASS = pass.split(":");
-                                  newPass = getPASS[1];
-                                  controller2.text = newPass;
-                                  controller3.text = newSSID;
-                                },
+                                onPressed: scanData,
                               ),
                               TextButton(
                                 child: Text(
                                   "Scan QR Code",
                                   style: TextStyle(color: Colors.black),
                                 ),
-                                onPressed: () async {
-                                  var result = await Navigator.pushNamed(
-                                      context, QRViewExample.id);
-                                  print(
-                                      'RESULT################################################');
-                                  print(result.runtimeType);
-                                  WifiCred = result.toString().split(";");
-                                  String ssid = WifiCred[1];
-                                  List<String> getSSID = ssid.split(":");
-                                  newSSID = getSSID[1];
-                                  String pass = WifiCred[2];
-                                  List<String> getPASS = pass.split(":");
-                                  newPass = getPASS[1];
-                                  controller2.text = newPass;
-                                  controller3.text = newSSID;
-                                },
+                                onPressed: scanData,
                               ),
                             ],
                           ),
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              print(oldSSID);
-                              print(oldSSIDInput);
-                              if (oldSSID == oldSSIDInput) {
-                                sendData("$newSSID+$newPass");
-                                loadingIgnite();
-                                controller1.clear();
-                                controller2.clear();
-                                controller3.clear();
-                              }
+                              // print(oldSSID);
+                              // print(oldSSIDInput);
+                              String text = "$newSSID+$newPass";
+                              sendData(text);
+                              // try {
+                              //   if (text.length > 16) {
+                              //     print("text length: ${text.length}");
+                              //     int loopCounter = (text.length / 16).round();
+                              //     // print("Loop counter without: $loopCounter");
+                              //     if (text.length % 16 != 0) {
+                              //       loopCounter += 1;
+                              //       // print("Loop counter with: $loopCounter");
+                              //     }
+                              //     int i = 0;
+                              //     int j = 0;
+                              //     while (j < loopCounter) {
+                              //       String dataText = "";
+                              //       i = j * 16;
+                              //       while (i < text.length) {
+                              //         dataText += text[i];
+                              //         i++;
+                              //         if (dataText.length == 16) {
+                              //           break;
+                              //         }
+                              //       }
+                              //       print(dataText);
+                              //       String finalSSIDPass = "#+$dataText";
+                              //       print(finalSSIDPass);
+                              //       sendData(finalSSIDPass);
+                              //       dataText = "";
+                              //       print(j);
+                              //       j++;
+                              //     }
+                              //   }
+                              //   sendData("#+#");
+                              // } catch (e) {
+                              //   print('Exception: $e');
+                              // }
+
+                              // sendData("$newSSID+$newPass");
+                              loadingIgnite();
+                              controller1.clear();
+                              controller2.clear();
+                              controller3.clear();
                             },
                             child: Text("Save")),
                       ],

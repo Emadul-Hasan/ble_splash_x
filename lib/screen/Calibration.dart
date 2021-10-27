@@ -36,6 +36,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   late Stream<List> stream;
   late BluetoothCharacteristic targetCharacteristics;
   late String message;
+  String date = "Never";
 
   void loadingIgnite() async {
     await EasyLoading.showInfo(message);
@@ -111,6 +112,8 @@ class _CalibrationPage1State extends State<CalibrationPage1>
     await targetCharacteristics.write(bytes);
   }
 
+  int xt = 0;
+
   @override
   void initState() {
     discoverServices();
@@ -168,6 +171,13 @@ class _CalibrationPage1State extends State<CalibrationPage1>
 
                       if (snapshot.connectionState == ConnectionState.active) {
                         try {
+                          Future.delayed(Duration(seconds: 4), () {
+                            while (xt < 1) {
+                              sendData("D+Calibration");
+                              xt = 1;
+                            }
+                          });
+
                           var x = _dataParser(snapshot.data as List<int>);
                           var _data = x.split('+');
                           print(_data);
@@ -175,6 +185,8 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                           if (_data[0] == 'C') {
                             message = _data[1];
                             loadingIgnite();
+                          } else if (_data[0] == "D") {
+                            date = _data[1];
                           }
                         } catch (e) {
                           print(e);
@@ -197,6 +209,14 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                               ),
                             ),
                             alignment: Alignment.center,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 30.0),
+                            child: Text("Last Calibrated: $date",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54,
+                                    fontSize: 18.0)),
                           ),
                           SizedBox(
                             height: 30.0,
@@ -235,11 +255,11 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                       style: TextStyle(
                                           color: Colors.black54,
                                           fontSize: 20.0,
-                                          fontWeight: FontWeight.bold))
+                                          fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),
-                          )
+                          ),
                         ],
                       );
                     },

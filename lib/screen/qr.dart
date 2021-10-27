@@ -13,6 +13,7 @@ class QRViewExample extends StatefulWidget {
 
 class _QRViewExampleState extends State<QRViewExample> {
   Barcode? result;
+  bool scanned = false;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
@@ -32,28 +33,26 @@ class _QRViewExampleState extends State<QRViewExample> {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          Expanded(flex: 10, child: _buildQrView(context)),
+          Expanded(flex: 20, child: _buildQrView(context)),
           Expanded(
-            flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  result != null
-                      ? ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context, result!.code);
-                          },
-                          child: Text("Go Back"))
-                      : Text(
-                          'Scan a code',
-                          style: TextStyle(fontSize: 14.0),
-                        ),
-                ],
-              ),
-            ),
-          )
+            flex: 2,
+            child: result != null
+                ? Container(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context, result!.code);
+                      },
+                      child: Text(
+                        "Click To Scan",
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Text("Searching for QR"),
+                  ),
+          ),
         ],
       ),
     );
@@ -63,8 +62,9 @@ class _QRViewExampleState extends State<QRViewExample> {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
-        ? 200.0
-        : 350.0;
+        ? 300.0
+        : 400.0;
+
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
@@ -87,7 +87,12 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        scanned = true;
       });
+      // if (scanned) {
+      //   scanned = false;
+      //   Navigator.pop(context, result!.code);
+      // }
     });
   }
 

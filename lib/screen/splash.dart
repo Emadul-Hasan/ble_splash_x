@@ -35,25 +35,14 @@ class _MyHomepageState extends State<MyHomepage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: Image.asset(
-              "images/credologo.png",
-              height: 80.0,
-              width: 80.0,
+            child: Text(
+              'SplashX',
+              style: TextStyle(
+                fontSize: 35.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          Text(
-            'CredoSense',
-            style: TextStyle(
-              fontSize: 35.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Padding(
-              padding: const EdgeInsets.only(left: 110.0),
-              child: Text(
-                "Sensing Dream",
-                style: TextStyle(fontSize: 12.0),
-              )),
         ],
       ),
     );

@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
+import 'package:ble_splash_x/customComponents/range.dart';
+import 'package:ble_splash_x/customComponents/rangeSetText.dart';
+import 'package:ble_splash_x/customComponents/streamCard.dart';
 import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:ble_splash_x/screen/discover.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,14 +49,19 @@ class _AppHomePageState extends State<AppHomePage> {
 
   String co2 = "000.00";
   double greenMin = 400;
-  double greenMax = 1000.0;
-  double greenMaxRange = 2000.0;
+  double greenMax = 1000;
+  double greenMaxRange = 2000;
   double yellowF = 1001.0;
   double yellowMax = 1500;
   double yellowMaxRange = 3000.0;
   double redMin = 1501.0;
   double redMaxRange = 10000;
-  double redMax = 10000;
+  double redMax = 5000;
+  String greenMaxHint = "1000";
+  String yellowMaxHint = "1500";
+  TextEditingController controllerGreen = TextEditingController();
+  TextEditingController controllerYellow = TextEditingController();
+  TextEditingController controllerRed = TextEditingController();
 
   Color barColor = Colors.green;
 
@@ -182,7 +190,7 @@ class _AppHomePageState extends State<AppHomePage> {
                   backgroundColor: MaterialStateProperty.all(Colors.black26),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, ConfigWiFiPage.id,
+                  Navigator.pushNamed(context, ConfigWiFiPage.id,
                       arguments: widget.device);
                 },
                 child: Text("Config Wifi"),
@@ -219,12 +227,19 @@ class _AppHomePageState extends State<AppHomePage> {
 
                   if (snapshot.connectionState == ConnectionState.active) {
                     try {
+                      Future.delayed(Duration(seconds: 4), () {
+                        sendData("CO2");
+                      });
+
                       var x = _dataParser(snapshot.data as List<int>);
                       var _data = x.split('+');
-                      print(_data);
+                      // print(_data);
 
                       co2 = _data[0];
+                      greenMaxHint = double.parse(_data[1]).round().toString();
+                      yellowMaxHint = double.parse(_data[2]).round().toString();
                       double value = double.parse(co2);
+
                       if (value < yellowF) {
                         barColor = Colors.green;
                       } else if (value < redMin) {
@@ -238,137 +253,86 @@ class _AppHomePageState extends State<AppHomePage> {
                   }
                   checkConnectionState();
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Card(
-                          child: Container(
-                            width: 300.0,
-                            padding: EdgeInsets.only(
-                                top: 30.0, left: 20.0, right: 20.0),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: barColor,
-                                  width: 3.0,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              // mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                RichText(
-                                  text: TextSpan(children: [
-                                    TextSpan(
-                                        text: "Live CO",
-                                        style: TextStyle(
-                                          fontSize: 28.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w400,
-                                        )),
-                                    TextSpan(
-                                      text: '2',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.w500,
-                                        fontFeatures: [
-                                          FontFeature.subscripts(),
-                                        ],
-                                      ),
-                                    ),
-                                    TextSpan(
-                                        text: ' Value (in ppm)',
-                                        style: TextStyle(
-                                          fontSize: 28.0,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black,
-                                        ))
-                                  ]),
-                                ),
-                                SizedBox(height: 15.0),
-                                RichText(
-                                  text: TextSpan(children: [
-                                    TextSpan(
-                                        text: co2,
-                                        style: TextStyle(
-                                          fontSize: 40.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w400,
-                                        )),
-                                    TextSpan(
-                                      text: 'ppm',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500,
-                                        fontFeatures: [
-                                          FontFeature.subscripts(),
-                                        ],
-                                      ),
-                                    ),
-                                  ]),
-                                ),
-                              ],
-                            ),
-                          ),
+                  return SingleChildScrollView(
+                    reverse: true,
+                    child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 20.0,
                         ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Center(
-                          child: Card(
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                  top: 10.0,
-                                  bottom: 10.0,
-                                  left: 70.0,
-                                  right: 70.0),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(
-                                    color: Colors.black38,
-                                    width: 3.0,
-                                  ),
-                                ),
-                              ),
-                              child: RichText(
-                                text: TextSpan(children: [
-                                  TextSpan(
-                                      text: "Set CO",
-                                      style: TextStyle(
-                                        fontSize: 24.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                  TextSpan(
-                                    text: '2',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w500,
-                                      fontFeatures: [
-                                        FontFeature.subscripts(),
-                                      ],
-                                    ),
-                                  ),
-                                  TextSpan(
-                                      text: ' ranges',
-                                      style: TextStyle(
-                                        fontSize: 24.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
-                                      ))
-                                ]),
-                              ),
-                            ),
-                          ),
+                        StreamCard(barColor: barColor, co2: co2),
+                        SizedBox(
+                          height: 20.0,
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
+                        RangeSetHeading(),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Range(
+                          Hint: greenMaxHint,
+                          min: 400,
+                          color: Colors.green,
+                          function: (value) {
+                            if (value == null) {
+                              flag = 0;
+                              greenMax = 1000;
+                            } else if (double.parse(value) < greenMaxRange) {
+                              greenMax = double.parse(value);
+                              flag = 1;
+                            } else {
+                              EasyLoading.showInfo(
+                                  "Expected Value within 400-2000");
+                            }
+                          },
+                          controller: controllerGreen,
+                        ),
+                        Range(
+                          Hint: yellowMaxHint,
+                          min: (greenMax > 400 && greenMax < 2000)
+                              ? greenMax + 1
+                              : yellowF,
+                          color: Colors.yellow,
+                          function: (value) {
+                            if (value == null) {
+                              flag = 0;
+                              yellowMax = yellowF + 500;
+                            } else if (double.parse(value) <
+                                yellowMaxRange + 1) {
+                              yellowMax = double.parse(value);
+                              flag = 1;
+                            } else {
+                              EasyLoading.showInfo(
+                                  "Expected Value within ${greenMax + 1}-3000");
+                            }
+                          },
+                          controller: controllerYellow,
+                        ),
+                        Range(
+                          Hint: redMax.round().toString(),
+                          min: (yellowMax > 1500 && yellowMax < 3001)
+                              ? yellowMax + 1
+                              : redMin,
+                          color: Colors.red,
+                          function: (value) {
+                            if (value == null) {
+                              redMax = yellowMax + 500;
+                              flag = 0;
+                            } else if (double.parse(value) < redMaxRange + 1) {
+                              redMax = double.parse(value);
+                              flag = 1;
+                            } else {
+                              EasyLoading.showInfo(
+                                  "Expected Value within ${yellowMax + 1}-10000");
+                            }
+                          },
+                          controller: controllerRed,
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: 30.0, vertical: 3.0),
                           child: Row(
@@ -377,10 +341,9 @@ class _AppHomePageState extends State<AppHomePage> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     setState(() {
-                                      yellowF = greenMax + 1;
-                                      redMin = yellowMax + 1;
                                       String limit = 'R+$greenMax+$yellowMax';
                                       sendData(limit);
+                                      // ToDo: show confirmation alert with button
                                     });
                                   },
                                   child: Text("Save"),
@@ -388,7 +351,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                       backgroundColor:
                                           MaterialStateProperty.resolveWith(
                                               (states) => flag == 0
-                                                  ? Colors.black12
+                                                  ? Colors.black26
                                                   : Colors.blueAccent)),
                                 ),
                               ),
@@ -400,12 +363,10 @@ class _AppHomePageState extends State<AppHomePage> {
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateProperty.resolveWith(
-                                              (states) => flag == 0
-                                                  ? Colors.black12
-                                                  : Colors.blueAccent)),
+                                              (states) => Colors.black26)),
                                   onPressed: () {
                                     flag = 0;
-                                    greenMax = 1000.0;
+                                    greenMax = 1000;
                                     yellowF = 1001.0;
                                     yellowMax = 1500;
                                     redMin = 1501.0;
@@ -417,8 +378,8 @@ class _AppHomePageState extends State<AppHomePage> {
                             ],
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 },
               ),

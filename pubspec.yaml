@@ -19,6 +19,8 @@ dependencies:
   material_design_icons_flutter: ^5.0.6295
   flutter_easyloading: ^3.0.3
   qr_code_scanner: ^0.5.2
+  introduction_screen: ^2.1.0
+
 
 
 

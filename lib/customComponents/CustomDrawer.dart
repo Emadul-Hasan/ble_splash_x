@@ -28,17 +28,14 @@ class _DrawerCustomState extends State<DrawerCustom> {
             DrawerHeader(
               child: Column(
                 children: [
-                  Image.asset(
-                    "images/credologo.png",
-                    height: 90.0,
-                    width: 90.0,
-                  ),
                   SizedBox(
-                    height: 10.0,
+                    height: 30.0,
                   ),
-                  Text(
-                    "AppName",
-                    style: TextStyle(fontSize: 20.0),
+                  Center(
+                    child: Text(
+                      "SplashX",
+                      style: TextStyle(fontSize: 20.0),
+                    ),
                   )
                 ],
               ),

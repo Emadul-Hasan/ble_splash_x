@@ -39,6 +39,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
       if (results.length == 0) {
         setState(() {});
       }
+      scannedDevice.clear();
+      scannedDevicesName.clear();
       // do something with scan results
       for (ScanResult r in results) {
         print('${r.device.name} found! rssi: ${r.rssi}');
