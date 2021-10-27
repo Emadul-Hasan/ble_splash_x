@@ -223,13 +223,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                   child: Text("Tap to Connect"));
                             }),
                         onTap: () async {
-                          loadingIgnite();
-                          await scannedDevice[index].connect();
-                          Timer(Duration(seconds: 2), () {
-                            Navigator.pushNamed(context, Homepage.id,
-                                arguments: scannedDevice[index]);
-                            EasyLoading.dismiss();
-                          });
+                          // loadingIgnite();
+                          // await scannedDevice[index].connect();
+                          // EasyLoading.dismiss();
                         },
                       ));
                 },

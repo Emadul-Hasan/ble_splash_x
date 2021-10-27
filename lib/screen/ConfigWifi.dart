@@ -143,8 +143,6 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   void scanData() async {
     var result = await Navigator.pushNamed(context, QRViewExample.id,
         arguments: widget.device);
-    print('RESULT################################################');
-    print(result.runtimeType);
     WifiCred = result.toString().split(";");
     String ssid = WifiCred[1];
     List<String> getSSID = ssid.split(":");
@@ -160,6 +158,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   void initState() {
     super.initState();
     discoverServices();
+    xt = 0;
 
     // connectToDevice();
   }
@@ -238,10 +237,10 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
                   if (snapshot.connectionState == ConnectionState.active) {
                     try {
-                      while (xt < 1) {
+                      Future.delayed(Duration(seconds: 4), () {
                         sendData("SSID+Pass");
-                        xt = 1;
-                      }
+                      });
+
                       var x = _dataParser(snapshot.data as List<int>);
                       var _data = x.split('+');
                       print(_data);
@@ -344,9 +343,10 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                         ),
                         ElevatedButton(
                             onPressed: () {
+                              loadingIgnite();
                               // print(oldSSID);
                               // print(oldSSIDInput);
-                              String text = "$newSSID+$newPass";
+                              String text = "S+$newSSID";
                               sendData(text);
                               // try {
                               //   if (text.length > 16) {
@@ -384,10 +384,16 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                               // }
 
                               // sendData("$newSSID+$newPass");
-                              loadingIgnite();
+
+                              Future.delayed(Duration(seconds: 4), () {
+                                String text = "P+$newPass";
+                                sendData(text);
+                                EasyLoading.showSuccess("SUCCESS");
+                              });
                               controller1.clear();
                               controller2.clear();
                               controller3.clear();
+                              xt = 0;
                             },
                             child: Text("Save")),
                       ],

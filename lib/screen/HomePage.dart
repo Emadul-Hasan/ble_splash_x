@@ -47,7 +47,7 @@ class _AppHomePageState extends State<AppHomePage> {
   late Stream<List> stream;
   late BluetoothCharacteristic targetCharacteristics;
 
-  String co2 = "000.00";
+  String co2 = "400";
   double greenMin = 400;
   double greenMax = 1000;
   double greenMaxRange = 2000;
@@ -59,10 +59,12 @@ class _AppHomePageState extends State<AppHomePage> {
   double redMax = 5000;
   String greenMaxHint = "1000";
   String yellowMaxHint = "1500";
+  int ColorFlag = 0;
   TextEditingController controllerGreen = TextEditingController();
   TextEditingController controllerYellow = TextEditingController();
   TextEditingController controllerRed = TextEditingController();
-
+  String calibrationMode = "Calibrating..";
+  int calibrationFlag = 0;
   Color barColor = Colors.green;
 
   late String state;
@@ -235,17 +237,26 @@ class _AppHomePageState extends State<AppHomePage> {
                       var _data = x.split('+');
                       // print(_data);
 
-                      co2 = _data[0];
                       greenMaxHint = double.parse(_data[1]).round().toString();
                       yellowMaxHint = double.parse(_data[2]).round().toString();
                       double value = double.parse(co2);
-
+                      if (_data[0] == "C") {
+                        calibrationFlag = 1;
+                      } else {
+                        co2 = _data[0];
+                      }
                       if (value < yellowF) {
                         barColor = Colors.green;
                       } else if (value < redMin) {
                         barColor = Colors.yellow;
                       } else {
                         barColor = Colors.red;
+                      }
+
+                      if (greenMax != 1000.0 ||
+                          redMax != 5000.0 ||
+                          yellowMax != 1500) {
+                        ColorFlag = 1;
                       }
                     } catch (e) {
                       print(e);
@@ -262,7 +273,11 @@ class _AppHomePageState extends State<AppHomePage> {
                         SizedBox(
                           height: 20.0,
                         ),
-                        StreamCard(barColor: barColor, co2: co2),
+                        StreamCard(
+                          barColor: barColor,
+                          co2: co2,
+                          calibrationFlag: calibrationFlag,
+                        ),
                         SizedBox(
                           height: 20.0,
                         ),
@@ -281,6 +296,7 @@ class _AppHomePageState extends State<AppHomePage> {
                             } else if (double.parse(value) < greenMaxRange) {
                               greenMax = double.parse(value);
                               flag = 1;
+                              ColorFlag = 0;
                             } else {
                               EasyLoading.showInfo(
                                   "Expected Value within 400-2000");
@@ -302,6 +318,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                 yellowMaxRange + 1) {
                               yellowMax = double.parse(value);
                               flag = 1;
+                              ColorFlag = 0;
                             } else {
                               EasyLoading.showInfo(
                                   "Expected Value within ${greenMax + 1}-3000");
@@ -318,10 +335,12 @@ class _AppHomePageState extends State<AppHomePage> {
                           function: (value) {
                             if (value == null) {
                               redMax = yellowMax + 500;
+
                               flag = 0;
                             } else if (double.parse(value) < redMaxRange + 1) {
                               redMax = double.parse(value);
                               flag = 1;
+                              ColorFlag = 0;
                             } else {
                               EasyLoading.showInfo(
                                   "Expected Value within ${yellowMax + 1}-10000");
@@ -340,11 +359,10 @@ class _AppHomePageState extends State<AppHomePage> {
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    setState(() {
-                                      String limit = 'R+$greenMax+$yellowMax';
-                                      sendData(limit);
-                                      // ToDo: show confirmation alert with button
-                                    });
+                                    String limit = 'R+$greenMax+$yellowMax';
+                                    sendData(limit);
+                                    ColorFlag = 1;
+                                    EasyLoading.showSuccess("Success");
                                   },
                                   child: Text("Save"),
                                   style: ButtonStyle(
@@ -363,7 +381,9 @@ class _AppHomePageState extends State<AppHomePage> {
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateProperty.resolveWith(
-                                              (states) => Colors.black26)),
+                                              (states) => ColorFlag == 0
+                                                  ? Colors.black26
+                                                  : Colors.blueAccent)),
                                   onPressed: () {
                                     flag = 0;
                                     greenMax = 1000;
@@ -371,6 +391,8 @@ class _AppHomePageState extends State<AppHomePage> {
                                     yellowMax = 1500;
                                     redMin = 1501.0;
                                     redMaxRange = 10000;
+                                    ColorFlag = 0;
+                                    EasyLoading.showSuccess("Success");
                                   },
                                   child: Text("Factory Default"),
                                 ),

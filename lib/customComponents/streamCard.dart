@@ -3,14 +3,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class StreamCard extends StatelessWidget {
-  const StreamCard({
-    Key? key,
-    required this.barColor,
-    required this.co2,
-  }) : super(key: key);
+  const StreamCard(
+      {Key? key,
+      required this.barColor,
+      required this.co2,
+      required this.calibrationFlag})
+      : super(key: key);
 
   final Color barColor;
   final String co2;
+  final int calibrationFlag;
 
   @override
   Widget build(BuildContext context) {
@@ -60,28 +62,34 @@ class StreamCard extends StatelessWidget {
               ]),
             ),
             SizedBox(height: 15.0),
-            RichText(
-              text: TextSpan(children: [
-                TextSpan(
-                    text: co2,
-                    style: TextStyle(
-                      fontSize: 40.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400,
-                    )),
-                TextSpan(
-                  text: 'ppm',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w500,
-                    fontFeatures: [
-                      FontFeature.subscripts(),
-                    ],
+            calibrationFlag == 0
+                ? RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: co2,
+                          style: TextStyle(
+                            fontSize: 40.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      TextSpan(
+                        text: 'ppm',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          fontFeatures: [
+                            FontFeature.subscripts(),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  )
+                : Text(
+                    "Calibrating....",
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
-                ),
-              ]),
-            ),
           ],
         ),
       ),

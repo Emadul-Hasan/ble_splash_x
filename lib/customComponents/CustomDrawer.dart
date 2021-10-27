@@ -80,7 +80,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 ),
               ),
               onTap: () {
-                Navigator.pushReplacementNamed(context, Homepage.id,
+                Navigator.pushNamed(context, Homepage.id,
                     arguments: widget.device);
               },
             ),
@@ -114,7 +114,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 ),
               ),
               onTap: () {
-                Navigator.pushReplacementNamed(context, ConfigWiFiPage.id,
+                Navigator.pushNamed(context, ConfigWiFiPage.id,
                     arguments: widget.device);
               },
             ),
