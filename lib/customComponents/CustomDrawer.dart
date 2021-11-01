@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:ble_splash_x/screen/Calibration.dart';
 import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:ble_splash_x/screen/HomePage.dart';
+import 'package:ble_splash_x/screen/discover.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -150,6 +151,40 @@ class _DrawerCustomState extends State<DrawerCustom> {
               onTap: () {
                 Navigator.pushReplacementNamed(context, CalibrationPage.id,
                     arguments: widget.device);
+              },
+            ),
+            ListTile(
+              title: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Logout",
+                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    ),
+                  ],
+                ),
+              ),
+              leading: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 10, color: Colors.black12, spreadRadius: 2)
+                  ],
+                ),
+                child: CircleAvatar(
+                  child: Icon(
+                    MdiIcons.logout,
+                    color: Colors.black,
+                    size: 25.0,
+                  ),
+                  backgroundColor: Colors.white,
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, DiscoverPage.id, (Route<dynamic> route) => false);
               },
             ),
           ],

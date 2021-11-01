@@ -217,8 +217,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                       backgroundColor:
                                           MaterialStateProperty.resolveWith(
                                               (states) => Colors.black)),
-                                  onPressed: () async {
-                                    await scannedDevice[index].connect();
+                                  onPressed: () {
+                                    loadingIgnite();
+                                    Timer(Duration(seconds: 2), () async {
+                                      await scannedDevice[index].connect();
+                                      EasyLoading.dismiss();
+                                    });
                                   },
                                   child: Text("Tap to Connect"));
                             }),

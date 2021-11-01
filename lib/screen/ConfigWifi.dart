@@ -40,22 +40,30 @@ class WifiConfigPage extends StatefulWidget {
 class _WifiConfigPageState extends State<WifiConfigPage> {
   final String serviceUUId = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
   final String characteristicUUId = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+
   bool isReady = false;
   late Stream<List> stream;
+
   late BluetoothCharacteristic targetCharacteristics;
   bool connected = false;
+
+  String network = "Unknown";
   late String oldSSID = "";
   late String oldSSIDInput;
+
   late String newSSID;
   late String newPass;
 
-  List<String> WifiCred = [];
+  int wifiDataController = 0;
+
+  List<String> wifiCred = [];
+
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
   TextEditingController controller3 = TextEditingController();
 
   void loadingIgnite() async {
-    await EasyLoading.showInfo("Done");
+    await EasyLoading.showInfo("Sending....");
   }
 
   connectToDevice() async {
@@ -88,6 +96,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
       _pop();
       return;
     }
+    widget.device.connect();
 
     List<BluetoothService> services = await widget.device.discoverServices();
     services.forEach((service) {
@@ -118,8 +127,8 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
   //
 
-  String _dataParser(List<int> datafromdevice) {
-    return utf8.decode(datafromdevice);
+  String _dataParser(List<int> dataFromDevice) {
+    return utf8.decode(dataFromDevice);
   }
 
   sendData(String data) async {
@@ -131,10 +140,10 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   void checkConnectionState() {
     widget.device.state.listen((event) async {
       if (event == BluetoothDeviceState.disconnected) {
-        print("disconnected");
         EasyLoading.showInfo("Device Disconnected");
         Timer(Duration(seconds: 2), () {
-          Navigator.pushReplacementNamed(context, DiscoverPage.id);
+          Navigator.pushNamedAndRemoveUntil(
+              context, DiscoverPage.id, (Route<dynamic> route) => false);
         });
       }
     });
@@ -143,28 +152,30 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   void scanData() async {
     var result = await Navigator.pushNamed(context, QRViewExample.id,
         arguments: widget.device);
-    WifiCred = result.toString().split(";");
-    String ssid = WifiCred[1];
+
+    wifiCred = result.toString().split(";");
+
+    String ssid = wifiCred[2];
     List<String> getSSID = ssid.split(":");
+    print("SSID: $getSSID");
     newSSID = getSSID[1];
-    String pass = WifiCred[2];
+
+    String pass = wifiCred[1];
     List<String> getPASS = pass.split(":");
+    print("PASS: $getPASS");
     newPass = getPASS[1];
-    controller2.text = newPass;
-    controller3.text = newSSID;
+
+    controller2.text = newSSID;
+    controller3.text = newPass;
   }
 
   @override
   void initState() {
     super.initState();
     discoverServices();
-    xt = 0;
-
     // connectToDevice();
   }
 
-  int xt = 0;
-  String network = "Unknown";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -237,25 +248,33 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
                   if (snapshot.connectionState == ConnectionState.active) {
                     try {
-                      Future.delayed(Duration(seconds: 4), () {
-                        sendData("SSID+Pass");
-                      });
+                      while (wifiDataController < 3) {
+                        Timer(Duration(seconds: 2), () async {
+                          await sendData("SSID+");
+                          print("Asking for Data");
+                        });
+                        wifiDataController++;
+                      }
 
                       var x = _dataParser(snapshot.data as List<int>);
                       var _data = x.split('+');
-                      print(_data);
-                      if (_data[0] == '1') {
-                        controller1.text = _data[1];
-                        connected = true;
-                      } else if (_data[0] == "0") {
-                        oldSSID = _data[1];
-                        connected = false;
+                      if (_data.length > 1) {
+                        if (_data[0] == '1') {
+                          controller1.text = _data[1];
+                          oldSSID = _data[1];
+                          connected = true;
+                        } else if (_data[0] == "0") {
+                          oldSSID = _data[1];
+                          connected = false;
+                        }
+                        if (_data[2] == "OK") {
+                          network = "OK";
+                        } else if (_data[2] == "NOK") {
+                          network = "NOT OK";
+                        }
                       }
-                      if (_data[2] == "OK") {
-                        network = "OK";
-                      } else if (_data[2] == "NOK") {
-                        network = "NOT OK";
-                      }
+                      // print(_data);
+
                     } catch (e) {
                       print(e);
                     }
@@ -278,15 +297,25 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                     TextStyle(fontSize: KTextSizeofWifiConfig),
                               ),
                             ),
-                            Inputfield(
-                              controller: controller1,
-                              obscuretext: false,
-                              margin: 10.0,
-                              keyBoardtype: TextInputType.emailAddress,
-                              function: (value) {
-                                oldSSIDInput = value;
-                              },
-                            ),
+                            Container(
+                                margin: EdgeInsets.only(top: 10.0),
+                                width: 220.0,
+                                padding: EdgeInsets.only(
+                                    left: 20.0,
+                                    right: 20.0,
+                                    top: 10.0,
+                                    bottom: 10.0),
+                                child: Text(
+                                  "$oldSSID",
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFEDEDED),
+                                  border: Border.all(
+                                    color: Color(0xFFEDEDED),
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
                             Container(
                               margin: EdgeInsets.only(top: 10.0),
                               child: Text("New SSID",
@@ -342,58 +371,59 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                           ),
                         ),
                         ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               loadingIgnite();
-                              // print(oldSSID);
-                              // print(oldSSIDInput);
-                              String text = "S+$newSSID";
-                              sendData(text);
-                              // try {
-                              //   if (text.length > 16) {
-                              //     print("text length: ${text.length}");
-                              //     int loopCounter = (text.length / 16).round();
-                              //     // print("Loop counter without: $loopCounter");
-                              //     if (text.length % 16 != 0) {
-                              //       loopCounter += 1;
-                              //       // print("Loop counter with: $loopCounter");
-                              //     }
-                              //     int i = 0;
-                              //     int j = 0;
-                              //     while (j < loopCounter) {
-                              //       String dataText = "";
-                              //       i = j * 16;
-                              //       while (i < text.length) {
-                              //         dataText += text[i];
-                              //         i++;
-                              //         if (dataText.length == 16) {
-                              //           break;
-                              //         }
-                              //       }
-                              //       print(dataText);
-                              //       String finalSSIDPass = "#+$dataText";
-                              //       print(finalSSIDPass);
-                              //       sendData(finalSSIDPass);
-                              //       dataText = "";
-                              //       print(j);
-                              //       j++;
-                              //     }
-                              //   }
-                              //   sendData("#+#");
-                              // } catch (e) {
-                              //   print('Exception: $e');
-                              // }
-
-                              // sendData("$newSSID+$newPass");
-
-                              Future.delayed(Duration(seconds: 4), () {
-                                String text = "P+$newPass";
-                                sendData(text);
-                                EasyLoading.showSuccess("SUCCESS");
+                              print(newSSID);
+                              print(newPass);
+                              if (newSSID.length <= 14) {
+                                String text = "S+1+$newSSID+";
+                                await sendData(text);
+                              } else if (newSSID.length > 14) {
+                                String halfSSID = "";
+                                for (int i = 0; i < 14; i++) {
+                                  halfSSID += newSSID[i];
+                                }
+                                String newHalfSSID = "S+2+$halfSSID+";
+                                print("half: $newHalfSSID");
+                                await sendData(newHalfSSID);
+                                Timer(const Duration(seconds: 1), () async {
+                                  var secondHalfSSID = "";
+                                  for (int i = 14; i < newSSID.length; i++) {
+                                    secondHalfSSID += newSSID[i];
+                                  }
+                                  String newSecondHalfSSID =
+                                      "S+2+$secondHalfSSID+";
+                                  print("half: $newSecondHalfSSID");
+                                  await sendData(newSecondHalfSSID);
+                                });
+                              }
+                              Timer(const Duration(seconds: 2), () async {
+                                if (newPass.length <= 14) {
+                                  String text = "P+1+$newPass+";
+                                  await sendData(text);
+                                } else if (newPass.length > 14) {
+                                  String halfPass = "";
+                                  for (int i = 0; i < 14; i++) {
+                                    halfPass += newPass[i];
+                                  }
+                                  String newHalfPass = "P+2+$halfPass+";
+                                  await sendData(newHalfPass);
+                                  Timer(const Duration(seconds: 1), () async {
+                                    var secondHalfPass = "";
+                                    for (int i = 14; i < newPass.length; i++) {
+                                      secondHalfPass += newPass[i];
+                                    }
+                                    String newSecondHalfPass =
+                                        "P+2+$secondHalfPass+";
+                                    await sendData(newSecondHalfPass);
+                                  });
+                                }
                               });
+
                               controller1.clear();
                               controller2.clear();
                               controller3.clear();
-                              xt = 0;
+                              EasyLoading.showSuccess("SUCCESS");
                             },
                             child: Text("Save")),
                       ],

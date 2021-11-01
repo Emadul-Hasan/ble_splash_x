@@ -5,6 +5,7 @@ import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'discover.dart';
 
@@ -72,7 +73,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
       _pop();
       return;
     }
-
+    widget.device.connect();
     List<BluetoothService> services = await widget.device.discoverServices();
     services.forEach((service) {
       if (service.uuid.toString() == serviceUUId) {
@@ -84,7 +85,6 @@ class _CalibrationPage1State extends State<CalibrationPage1>
 
             setState(() {
               isReady = true;
-              // writeData('1');
             });
           }
         });
@@ -112,11 +112,10 @@ class _CalibrationPage1State extends State<CalibrationPage1>
     await targetCharacteristics.write(bytes);
   }
 
-  int xt = 0;
+  bool calibrationFlag = false;
 
   @override
   void initState() {
-    xt = 0;
     discoverServices();
     controller =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
@@ -129,10 +128,10 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   void checkConnectionState() {
     widget.device.state.listen((event) async {
       if (event == BluetoothDeviceState.disconnected) {
-        print("disconnected");
         EasyLoading.showInfo("Device Disconnected");
         Timer(Duration(seconds: 2), () {
-          Navigator.pushReplacementNamed(context, DiscoverPage.id);
+          Navigator.pushNamedAndRemoveUntil(
+              context, DiscoverPage.id, (Route<dynamic> route) => false);
         });
       }
     });
@@ -172,28 +171,15 @@ class _CalibrationPage1State extends State<CalibrationPage1>
 
                       if (snapshot.connectionState == ConnectionState.active) {
                         try {
-                          // Future.delayed(Duration(seconds: 2), () {
-                          //   while (xt < 10) {
-                          //     sendData("D+Calibration");
-                          //     xt += 1;
-                          //   }
-                          // });
-
                           var x = _dataParser(snapshot.data as List<int>);
                           var _data = x.split('+');
-                          print(_data);
-                          if (_data[0] == 'C') {
+
+                          if (_data[0] == 'CM') {
                             message = _data[1];
                             loadingIgnite();
+                          } else if (_data[0] == 'C') {
+                            calibrationFlag = true;
                           }
-                          // if (_data[0] == 'C') {
-                          //   message = _data[1];
-                          //   loadingIgnite();
-                          //   xt = 1;
-                          // } else if (_data[0] == "D") {
-                          //   date = _data[1];
-                          //   xt = 1;
-                          // }
                         } catch (e) {
                           print(e);
                         }
@@ -216,57 +202,45 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                             ),
                             alignment: Alignment.center,
                           ),
-                          // Container(
-                          //   margin: EdgeInsets.only(top: 30.0),
-                          //   child: Text("Last Calibrated: $date",
-                          //       style: TextStyle(
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Colors.black54,
-                          //           fontSize: 18.0)),
-                          // ),
                           SizedBox(
                             height: 30.0,
                           ),
                           Container(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: GestureDetector(
-                              onTapDown: (_) => controller.forward(),
-                              onTapUp: (_) async {
-                                if (controller.status ==
-                                    AnimationStatus.completed) {
-                                  controller.value = 0.0;
-                                  sendData("C+C");
-                                  print("#############################");
-                                }
-                                if (controller.status ==
-                                    AnimationStatus.forward) {
-                                  controller.reverse();
-                                }
-                              },
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 120,
-                                    width: 120,
-                                    child: CircularProgressIndicator(
-                                      semanticsLabel: 'Tap here',
-                                      strokeWidth: 8.0,
-                                      value: controller.value,
-                                      backgroundColor: Colors.black38,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.blueGrey),
-                                    ),
-                                  ),
-                                  Text("Tap & Hold",
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                          ),
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.resolveWith(
+                                            (states) => Colors.blueAccent)),
+                                onPressed: () {
+                                  if (calibrationFlag) {
+                                    EasyLoading.showInfo(
+                                        "Calibration on progress, please try after calibration end");
+                                  } else if (!calibrationFlag) {
+                                    Alert(
+                                        context: context,
+                                        title: "Confirmation",
+                                        desc:
+                                            "Are you sure to start calibration?",
+                                        buttons: [
+                                          DialogButton(
+                                              onPressed: () async {
+                                                Navigator.pop(context);
+                                                await sendData("C+");
+                                              },
+                                              child: Text("Yes")),
+                                          DialogButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("No")),
+                                        ]).show();
+                                  }
+                                },
+                                child: Text(calibrationFlag
+                                    ? "Calibration On process"
+                                    : "Start Calibration"),
+                              )),
                         ],
                       );
                     },
