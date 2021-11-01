@@ -215,7 +215,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                 onPressed: () {
                                   if (calibrationFlag) {
                                     EasyLoading.showInfo(
-                                        "Calibration on progress, please try after calibration end");
+                                        "Calibration on progress, Please Try Again After Calibration Ends");
                                   } else if (!calibrationFlag) {
                                     Alert(
                                         context: context,

@@ -183,6 +183,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 ),
               ),
               onTap: () {
+                widget.device.disconnect();
                 Navigator.pushNamedAndRemoveUntil(
                     context, DiscoverPage.id, (Route<dynamic> route) => false);
               },
