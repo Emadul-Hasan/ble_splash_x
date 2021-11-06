@@ -554,24 +554,50 @@ class _AppHomePageState extends State<AppHomePage> {
                           },
                           controller: controllerYellow,
                         ),
-                        Range(
-                          Hint: redMaxHint,
-                          min: yellowMax + 1,
-                          color: Colors.red,
-                          function: (value) {
-                            if (value == '') {
-                              flag = 0;
-                            } else if (double.parse(value) < redMaxRange + 1) {
-                              redMax = double.parse(value);
-                              flag = 1;
-                              colorFlag = 0;
-                            } else {
-                              redMax = 5000;
-                              EasyLoading.showInfo(
-                                  "Expected Value within ${yellowMax.round() + 1}-10000");
-                            }
-                          },
-                          controller: controllerRed,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.red,
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Container(
+                                padding: EdgeInsets.only(
+                                    left: 20.0,
+                                    right: 20.0,
+                                    top: 10.0,
+                                    bottom: 10.0),
+                                child: Text("Value"),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFEDEDED),
+                                  border: Border.all(
+                                    color: Color(0xFFEDEDED),
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                            Container(
+                                padding: EdgeInsets.all(10.0),
+                                child: Text(
+                                  '-',
+                                  style: TextStyle(fontSize: 20.0),
+                                )),
+                            Container(
+                                padding: EdgeInsets.only(
+                                    left: 20.0,
+                                    right: 20.0,
+                                    top: 10.0,
+                                    bottom: 10.0),
+                                child: Text("10000"),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFEDEDED),
+                                  border: Border.all(
+                                    color: Color(0xFFEDEDED),
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                          ],
                         ),
                         SizedBox(
                           height: 20.0,
@@ -676,30 +702,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                             "Are you sure to change the value to default value",
                                         buttons: [
                                           DialogButton(
-                                              onPressed: () {
-                                                flag = 1;
-                                                greenMax = 1000.0;
-                                                yellowMin = 1001.0;
-                                                yellowMax = 1500.0;
-                                                redMin = 1501.0;
-                                                redMax = 5000.0;
-                                                colorFlag = 0;
-                                                greenMaxHint =
-                                                    "${greenMax.round()}";
-                                                yellowMaxHint =
-                                                    "${yellowMax.round()}";
-                                                greenCache = greenMax;
-                                                yellowCache = yellowMax;
-                                                String limit =
-                                                    'R+$greenMax+$yellowMax+';
-                                                sendData(limit);
-                                                controllerRed.clear();
-                                                controllerYellow.clear();
-                                                controllerGreen.clear();
-                                                Navigator.pop(context);
-                                                EasyLoading.showSuccess(
-                                                    "Success");
-                                              },
+                                              onPressed: () {},
                                               child: Text("Yes")),
                                           DialogButton(
                                               onPressed: () {
