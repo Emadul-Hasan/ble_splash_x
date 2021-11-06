@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
+import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -36,12 +37,8 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   bool isReady = false;
   late Stream<List> stream;
   late BluetoothCharacteristic targetCharacteristics;
-  late String message;
+  String message = '';
   String date = "Never";
-
-  void loadingIgnite() async {
-    await EasyLoading.showInfo(message);
-  }
 
   connectToDevice() async {
     if (widget.device == null) {
@@ -137,87 +134,118 @@ class _CalibrationPage1State extends State<CalibrationPage1>
     });
   }
 
+  Future<bool> _onBackPressed() async {
+    Navigator.pushNamed(context, Homepage.id, arguments: widget.device);
+    return true;
+    // final shouldPop = await showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       title: Text('Confirm'),
+    //       content: Text('Do you want to exit the App'),
+    //       actions: <Widget>[
+    //         TextButton(
+    //           child: Text('No'),
+    //           onPressed: () {
+    //             Navigator.of(context).pop(false); //Will not exit the App
+    //           },
+    //         ),
+    //         TextButton(
+    //           child: Text('Yes'),
+    //           onPressed: () {
+    //             if (Platform.isAndroid) {
+    //               SystemNavigator.pop();
+    //             } else {
+    //               exit(0);
+    //             }
+    //           },
+    //         )
+    //       ],
+    //     );
+    //   },
+    // );
+    // return shouldPop ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.device.name),
-        backgroundColor: Colors.black38,
-      ),
-      drawer: DrawerCustom(
-        request: false,
-        device: widget.device,
-      ),
-      body: Center(
-        child: Container(
-          child: isReady == false
-              ? Center(
-                  child: Text("Reading Data...."),
-                )
-              : Container(
-                  child: StreamBuilder<List>(
-                    stream: stream,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<List> snapshot) {
-                      if (snapshot.hasError) {
-                        Timer(Duration(seconds: 30), () {
-                          print('done');
-                        });
-                        return Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.lightBlueAccent,
-                          ),
-                        );
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.active) {
-                        try {
-                          var x = _dataParser(snapshot.data as List<int>);
-                          var _data = x.split('+');
-
-                          if (_data[0] == 'CM') {
-                            message = _data[1];
-                            loadingIgnite();
-                          } else if (_data[0] == 'C') {
-                            calibrationFlag = true;
-                          }
-                        } catch (e) {
-                          print(e);
-                        }
-                      }
-                      checkConnectionState();
-
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 250.0,
-                            child: Text(
-                              "Calibrate Your Device",
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54,
-                              ),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.device.name),
+          backgroundColor: Colors.black38,
+        ),
+        drawer: DrawerCustom(
+          request: false,
+          device: widget.device,
+        ),
+        body: Center(
+          child: Container(
+            child: isReady == false
+                ? Center(
+                    child: Text("Reading Data...."),
+                  )
+                : Container(
+                    child: StreamBuilder<List>(
+                      stream: stream,
+                      builder:
+                          (BuildContext context, AsyncSnapshot<List> snapshot) {
+                        if (snapshot.hasError) {
+                          Timer(Duration(seconds: 30), () {
+                            print('done');
+                          });
+                          return Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.lightBlueAccent,
                             ),
-                            alignment: Alignment.center,
-                          ),
-                          SizedBox(
-                            height: 30.0,
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.resolveWith(
-                                            (states) => Colors.blueAccent)),
-                                onPressed: () {
-                                  if (calibrationFlag) {
-                                    EasyLoading.showInfo(
-                                        "Calibration on progress, Please Try Again After Calibration Ends");
-                                  } else if (!calibrationFlag) {
+                          );
+                        }
+
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          try {
+                            var x = _dataParser(snapshot.data as List<int>);
+                            var _data = x.split('+');
+                            if (_data[0] == 'CM') {
+                              message = _data[1];
+                            } else if (_data[0] == 'C') {
+                              calibrationFlag = true;
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                        checkConnectionState();
+
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 250.0,
+                              child: Text(
+                                "Calibrate Your Device",
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                            ),
+                            SizedBox(
+                              height: 30.0,
+                            ),
+                            Container(
+                                padding: EdgeInsets.only(top: 10.0),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) => Colors.blueAccent)),
+                                  onPressed: () {
+                                    // await sendData("C+");
                                     Alert(
                                         context: context,
                                         title: "Confirmation",
@@ -228,6 +256,8 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                               onPressed: () async {
                                                 Navigator.pop(context);
                                                 await sendData("C+");
+                                                EasyLoading.showInfo(
+                                                    "Calibration Starting");
                                               },
                                               child: Text("Yes")),
                                           DialogButton(
@@ -236,19 +266,25 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                               },
                                               child: Text("No")),
                                         ]).show();
-                                  }
-                                },
-                                child: Text(calibrationFlag
-                                    ? "Calibration On process"
-                                    : "Start Calibration"),
-                              )),
-                        ],
-                      );
-                    },
+                                  },
+                                  child: Text(calibrationFlag
+                                      ? "Calibration On process"
+                                      : "Start Calibration"),
+                                )),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 }

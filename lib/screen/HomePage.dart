@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:ble_splash_x/customComponents/range.dart';
 import 'package:ble_splash_x/customComponents/rangeSetText.dart';
 import 'package:ble_splash_x/customComponents/streamCard.dart';
 import 'package:ble_splash_x/screen/ConfigWifi.dart';
@@ -15,6 +14,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'Calibration.dart';
+
+var greenValueTrail = "..";
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -60,12 +61,10 @@ class _AppHomePageState extends State<AppHomePage> {
   double yellowMaxRange = 3000.0;
 
   double redMin = 1501.0;
-  double redMax = 5000;
   double redMaxRange = 10000;
 
   String greenMaxHint = "1000";
   String yellowMaxHint = "1500";
-  String redMaxHint = "5000";
 
   int colorFlag = 0;
   late double value;
@@ -461,6 +460,8 @@ class _AppHomePageState extends State<AppHomePage> {
                         print("Got Data");
                         greenCache = double.parse(_data[1]);
                         yellowCache = double.parse(_data[2]);
+
+                        greenValueTrail = greenCache;
                         yellowMin = greenCache + 1;
                         greenMax = greenCache;
                         yellowMax = yellowCache;
@@ -481,9 +482,7 @@ class _AppHomePageState extends State<AppHomePage> {
                         barColor = Colors.red;
                       }
 
-                      if (greenMax != 1000.0 ||
-                          redMax != 5000.0 ||
-                          yellowMax != 1500) {
+                      if (greenMax != 1000.0 || yellowMax != 1500) {
                         colorFlag = 1;
                       }
                     } catch (e) {
@@ -513,46 +512,49 @@ class _AppHomePageState extends State<AppHomePage> {
                         SizedBox(
                           height: 20.0,
                         ),
-                        Range(
-                          Hint: greenMaxHint,
-                          min: 400,
-                          color: Colors.green,
-                          function: (value) {
-                            if (value == "") {
-                              flag = 0;
-                              greenMax = greenCache;
-                            } else if (double.parse(value) < greenMaxRange) {
-                              greenMax = double.parse(value);
-                              flag = 1;
-                              colorFlag = 0;
-                            } else {
-                              EasyLoading.showInfo(
-                                  "Expected Value within 400-2000");
-                            }
-                          },
-                          controller: controllerGreen,
-                        ),
-                        Range(
-                          Hint: yellowMaxHint,
-                          min: (greenMax > 400 && greenMax < 2000)
-                              ? greenMax + 1
-                              : yellowMin,
-                          color: Colors.yellow,
-                          function: (value) {
-                            if (value == '') {
-                              flag = 0;
-                              greenMax = greenCache;
-                            } else if (double.parse(value) <
-                                yellowMaxRange + 1) {
-                              yellowMax = double.parse(value);
-                              flag = 1;
-                              colorFlag = 0;
-                            } else {
-                              EasyLoading.showInfo(
-                                  "Expected Value within ${greenMax.round() + 1}-3000");
-                            }
-                          },
-                          controller: controllerYellow,
+                        // Range(
+                        //   Hint: greenMaxHint,
+                        //   min: 400,
+                        //   color: Colors.green,
+                        //   function: (value) {
+                        //     if (value == "") {
+                        //       flag = 0;
+                        //       greenMax = greenCache;
+                        //     } else if (double.parse(value) < greenMaxRange) {
+                        //       greenMax = double.parse(value);
+                        //       flag = 1;
+                        //       colorFlag = 0;
+                        //     } else {
+                        //       EasyLoading.showInfo(
+                        //           "Expected Value within 400-2000");
+                        //     }
+                        //   },
+                        //   controller: controllerGreen,
+                        // ),
+                        // Range(
+                        //   Hint: yellowMaxHint,
+                        //   min: (greenMax > 400 && greenMax < 2001)
+                        //       ? greenMax + 1
+                        //       : yellowMin,
+                        //   color: Colors.yellow,
+                        //   function: (value) {
+                        //     if (value == '') {
+                        //       flag = 0;
+                        //       greenMax = greenCache;
+                        //     } else if (double.parse(value) <
+                        //         yellowMaxRange + 1) {
+                        //       yellowMax = double.parse(value);
+                        //       flag = 1;
+                        //       colorFlag = 0;
+                        //     } else {
+                        //       EasyLoading.showInfo(
+                        //           "Expected Value within ${greenMax.round() + 1}-3000");
+                        //     }
+                        //   },
+                        //   controller: controllerYellow,
+                        // ),
+                        SizedBox(
+                          height: 20.0,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -584,12 +586,14 @@ class _AppHomePageState extends State<AppHomePage> {
                                   style: TextStyle(fontSize: 20.0),
                                 )),
                             Container(
+                                width: 110.0,
+                                height: 40.0,
                                 padding: EdgeInsets.only(
                                     left: 20.0,
                                     right: 20.0,
                                     top: 10.0,
                                     bottom: 10.0),
-                                child: Text("10000"),
+                                child: Text('$greenValueTrail'),
                                 decoration: BoxDecoration(
                                   color: Color(0xFFEDEDED),
                                   border: Border.all(
@@ -609,60 +613,27 @@ class _AppHomePageState extends State<AppHomePage> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    if (greenMax < greenMin) {
-                                      EasyLoading.showInfo(
-                                          "Green maximum Value cannot be lower than minimum");
-                                      greenMax = greenCache;
-                                      yellowMax = yellowCache;
-                                      controllerGreen.clear();
-                                      controllerYellow.clear();
-                                      controllerRed.clear();
-                                    } else if (yellowMax < yellowMin) {
-                                      EasyLoading.showInfo(
-                                          "Yellow maximum Value cannot be lower than minimum");
-                                      greenMax = greenCache;
-                                      yellowMax = yellowCache;
-                                      controllerGreen.clear();
-                                      controllerYellow.clear();
-                                      controllerRed.clear();
-                                    } else if (redMax < redMin) {
-                                      EasyLoading.showInfo(
-                                          "Red maximum Value cannot be lower than minimum");
-                                      greenMax = greenCache;
-                                      yellowMax = yellowCache;
-                                      controllerGreen.clear();
-                                      controllerYellow.clear();
-                                      controllerRed.clear();
-                                    } else {
-                                      Alert(
-                                          closeFunction: () {
-                                            Navigator.pop(context);
+                                  onPressed: flag == 1
+                                      ? () {
+                                          if (greenMax < greenMin) {
+                                            EasyLoading.showInfo(
+                                                "Green maximum Value cannot be lower than minimum");
                                             greenMax = greenCache;
                                             yellowMax = yellowCache;
-                                            controllerRed.clear();
-                                            controllerYellow.clear();
                                             controllerGreen.clear();
-                                          },
-                                          context: context,
-                                          title: "Confirmation",
-                                          desc:
-                                              "Are you sure to change the value to\n Green:${greenMin.round()} - ${greenMax.round()}\nYellow:${greenMax.round() + 1}-${yellowMax.round()}\nRed:${yellowMax.round() + 1} - ${redMax.round()}",
-                                          buttons: [
-                                            DialogButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  String limit =
-                                                      'R+$greenMax+$yellowMax+';
-                                                  sendData(limit);
-                                                  colorFlag = 1;
-
-                                                  EasyLoading.showSuccess(
-                                                      "Success");
-                                                },
-                                                child: Text("Yes")),
-                                            DialogButton(
-                                                onPressed: () {
+                                            controllerYellow.clear();
+                                            controllerRed.clear();
+                                          } else if (yellowMax < yellowMin) {
+                                            EasyLoading.showInfo(
+                                                "Yellow maximum Value cannot be lower than minimum");
+                                            greenMax = greenCache;
+                                            yellowMax = yellowCache;
+                                            controllerGreen.clear();
+                                            controllerYellow.clear();
+                                            controllerRed.clear();
+                                          } else {
+                                            Alert(
+                                                closeFunction: () {
                                                   Navigator.pop(context);
                                                   greenMax = greenCache;
                                                   yellowMax = yellowCache;
@@ -670,10 +641,38 @@ class _AppHomePageState extends State<AppHomePage> {
                                                   controllerYellow.clear();
                                                   controllerGreen.clear();
                                                 },
-                                                child: Text("No")),
-                                          ]).show();
-                                    }
-                                  },
+                                                context: context,
+                                                title: "Confirmation",
+                                                desc:
+                                                    "Are you sure to change the value to\n Green:${greenMin.round()} - ${greenMax.round()}\nYellow:${greenMax.round() + 1}-${yellowMax.round()}\nRed:${yellowMax.round() + 1}- 10000",
+                                                buttons: [
+                                                  DialogButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        String limit =
+                                                            'R+$greenMax+$yellowMax+';
+                                                        sendData(limit);
+                                                        colorFlag = 1;
+
+                                                        EasyLoading.showSuccess(
+                                                            "Success");
+                                                      },
+                                                      child: Text("Yes")),
+                                                  DialogButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        greenMax = greenCache;
+                                                        yellowMax = yellowCache;
+                                                        controllerRed.clear();
+                                                        controllerYellow
+                                                            .clear();
+                                                        controllerGreen.clear();
+                                                      },
+                                                      child: Text("No")),
+                                                ]).show();
+                                          }
+                                        }
+                                      : null,
                                   child: Text("Save"),
                                   style: ButtonStyle(
                                       backgroundColor:
@@ -694,23 +693,25 @@ class _AppHomePageState extends State<AppHomePage> {
                                               (states) => colorFlag == 0
                                                   ? Colors.black26
                                                   : Colors.blueAccent)),
-                                  onPressed: () {
-                                    Alert(
-                                        context: context,
-                                        title: "Confirmation",
-                                        desc:
-                                            "Are you sure to change the value to default value",
-                                        buttons: [
-                                          DialogButton(
-                                              onPressed: () {},
-                                              child: Text("Yes")),
-                                          DialogButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text("No")),
-                                        ]).show();
-                                  },
+                                  onPressed: colorFlag == 1
+                                      ? () {
+                                          Alert(
+                                              context: context,
+                                              title: "Confirmation",
+                                              desc:
+                                                  "Are you sure to change the value to default value",
+                                              buttons: [
+                                                DialogButton(
+                                                    onPressed: () {},
+                                                    child: Text("Yes")),
+                                                DialogButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("No")),
+                                              ]).show();
+                                        }
+                                      : null,
                                   child: Text("Factory Default"),
                                 ),
                               ),
