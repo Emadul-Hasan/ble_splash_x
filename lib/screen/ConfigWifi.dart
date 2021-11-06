@@ -226,6 +226,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
       ),
       drawer: DrawerCustom(
         device: widget.device,
+        request: false,
       ),
       body: isReady == false
           ? Center(
@@ -248,8 +249,8 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
                   if (snapshot.connectionState == ConnectionState.active) {
                     try {
-                      while (wifiDataController < 3) {
-                        Timer(Duration(seconds: 2), () async {
+                      while (wifiDataController < 15) {
+                        Timer(Duration(seconds: 3), () async {
                           await sendData("SSID+");
                           print("Asking for Data");
                         });
@@ -372,13 +373,18 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                         ),
                         ElevatedButton(
                             onPressed: () async {
-                              loadingIgnite();
-                              print(newSSID);
-                              print(newPass);
+                              // Sending SSID
+
                               if (newSSID.length <= 14) {
                                 String text = "S+1+$newSSID+";
                                 await sendData(text);
-                              } else if (newSSID.length > 14) {
+                              }
+                              if (newPass.length <= 14) {
+                                String text = "P+1+$newPass+";
+                                await sendData(text);
+                              }
+
+                              if (newSSID.length > 14) {
                                 String halfSSID = "";
                                 for (int i = 0; i < 14; i++) {
                                   halfSSID += newSSID[i];
@@ -386,39 +392,36 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                 String newHalfSSID = "S+2+$halfSSID+";
                                 print("half: $newHalfSSID");
                                 await sendData(newHalfSSID);
-                                Timer(const Duration(seconds: 1), () async {
-                                  var secondHalfSSID = "";
-                                  for (int i = 14; i < newSSID.length; i++) {
-                                    secondHalfSSID += newSSID[i];
-                                  }
+                                var secondHalfSSID = "";
+                                for (int i = 14; i < newSSID.length; i++) {
+                                  secondHalfSSID += newSSID[i];
+                                }
+                                Timer(const Duration(seconds: 2), () async {
                                   String newSecondHalfSSID =
                                       "S+2+$secondHalfSSID+";
                                   print("half: $newSecondHalfSSID");
                                   await sendData(newSecondHalfSSID);
                                 });
                               }
-                              Timer(const Duration(seconds: 2), () async {
-                                if (newPass.length <= 14) {
-                                  String text = "P+1+$newPass+";
-                                  await sendData(text);
-                                } else if (newPass.length > 14) {
-                                  String halfPass = "";
-                                  for (int i = 0; i < 14; i++) {
-                                    halfPass += newPass[i];
-                                  }
-                                  String newHalfPass = "P+2+$halfPass+";
-                                  await sendData(newHalfPass);
-                                  Timer(const Duration(seconds: 1), () async {
-                                    var secondHalfPass = "";
-                                    for (int i = 14; i < newPass.length; i++) {
-                                      secondHalfPass += newPass[i];
-                                    }
-                                    String newSecondHalfPass =
-                                        "P+2+$secondHalfPass+";
-                                    await sendData(newSecondHalfPass);
-                                  });
+                              // sleep(Duration(milliseconds: 800));
+
+                              if (newPass.length > 14) {
+                                String halfPass = "";
+                                for (int i = 0; i < 14; i++) {
+                                  halfPass += newPass[i];
                                 }
-                              });
+                                String newHalfPass = "P+2+$halfPass+";
+                                await sendData(newHalfPass);
+                                var secondHalfPass = "";
+                                for (int i = 14; i < newPass.length; i++) {
+                                  secondHalfPass += newPass[i];
+                                }
+                                Timer(const Duration(seconds: 2), () async {
+                                  String newSecondHalfPass =
+                                      "P+2+$secondHalfPass+";
+                                  await sendData(newSecondHalfPass);
+                                });
+                              }
 
                               controller1.clear();
                               controller2.clear();

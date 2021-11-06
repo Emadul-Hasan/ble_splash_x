@@ -10,9 +10,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 class DrawerCustom extends StatefulWidget {
   final BluetoothDevice device;
+  final bool request;
   const DrawerCustom({
     Key? key,
     required this.device,
+    required this.request,
   }) : super(key: key);
 
   @override

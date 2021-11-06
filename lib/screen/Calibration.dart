@@ -145,6 +145,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
         backgroundColor: Colors.black38,
       ),
       drawer: DrawerCustom(
+        request: false,
         device: widget.device,
       ),
       body: Center(

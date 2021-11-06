@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
 import 'package:ble_splash_x/customComponents/range.dart';
 import 'package:ble_splash_x/customComponents/rangeSetText.dart';
 import 'package:ble_splash_x/customComponents/streamCard.dart';
@@ -12,7 +11,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+import 'Calibration.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -85,6 +87,8 @@ class _AppHomePageState extends State<AppHomePage> {
   late var yellowCache;
 
   int rangeController = 0;
+
+  bool request = true;
 
   late List<BluetoothService> services;
 
@@ -210,6 +214,13 @@ class _AppHomePageState extends State<AppHomePage> {
                   backgroundColor: MaterialStateProperty.all(Colors.black26),
                 ),
                 onPressed: () {
+                  setState(() {
+                    request = false;
+                  });
+                  Timer(Duration(seconds: 3), () async {
+                    await sendData("SSID+");
+                  });
+
                   Navigator.pushNamed(context, ConfigWiFiPage.id,
                       arguments: widget.device);
                 },
@@ -223,8 +234,189 @@ class _AppHomePageState extends State<AppHomePage> {
         title: Text(widget.device.name),
         backgroundColor: Colors.black38,
       ),
-      drawer: DrawerCustom(
-        device: widget.device,
+      drawer: Drawer(
+        child: Container(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    Center(
+                      child: Text(
+                        "SplashX",
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              ListTile(
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Configure CO",
+                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      ),
+                      TextSpan(
+                        text: '2',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12.0,
+                          fontFeatures: [
+                            FontFeature.subscripts(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                leading: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 10,
+                          color: Colors.black12,
+                          spreadRadius: 2)
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    child: Icon(
+                      MdiIcons.fire,
+                      color: Colors.black,
+                      size: 25.0,
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, Homepage.id,
+                      arguments: widget.device);
+                },
+              ),
+              ListTile(
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Configure Wifi",
+                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      ),
+                    ],
+                  ),
+                ),
+                leading: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 10,
+                          color: Colors.black12,
+                          spreadRadius: 2)
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    child: Icon(
+                      MdiIcons.wifiSync,
+                      color: Colors.black,
+                      size: 25.0,
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+                onTap: () {
+                  setState(() {
+                    request = false;
+                  });
+                  Navigator.pushNamed(context, ConfigWiFiPage.id,
+                      arguments: widget.device);
+                },
+              ),
+              ListTile(
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Device Calibration",
+                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      ),
+                    ],
+                  ),
+                ),
+                leading: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 10,
+                          color: Colors.black12,
+                          spreadRadius: 2)
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    child: Icon(
+                      MdiIcons.reload,
+                      color: Colors.black,
+                      size: 25.0,
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+                onTap: () {
+                  setState(() {
+                    request = false;
+                  });
+                  Navigator.pushReplacementNamed(context, CalibrationPage.id,
+                      arguments: widget.device);
+                },
+              ),
+              ListTile(
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Logout",
+                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      ),
+                    ],
+                  ),
+                ),
+                leading: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 10,
+                          color: Colors.black12,
+                          spreadRadius: 2)
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    child: Icon(
+                      MdiIcons.logout,
+                      color: Colors.black,
+                      size: 25.0,
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+                onTap: () {
+                  widget.device.disconnect();
+                  Navigator.pushNamedAndRemoveUntil(context, DiscoverPage.id,
+                      (Route<dynamic> route) => false);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
       body: isReady == false
           ? Center(
@@ -247,16 +439,17 @@ class _AppHomePageState extends State<AppHomePage> {
 
                   if (snapshot.connectionState == ConnectionState.active) {
                     try {
-                      while (rangeController < 3) {
+                      while (rangeController < 15) {
                         Timer(Duration(seconds: 2), () async {
                           await sendData("RR+");
                         });
                         rangeController++;
                       }
-
-                      Timer(Duration(seconds: 2), () async {
-                        await sendData("CO2+");
-                      });
+                      if (request) {
+                        Timer(Duration(seconds: 2), () async {
+                          await sendData("CO2+");
+                        });
+                      }
 
                       var x = _dataParser(snapshot.data as List<int>);
                       var _data = x.split('+');
@@ -394,12 +587,27 @@ class _AppHomePageState extends State<AppHomePage> {
                                     if (greenMax < greenMin) {
                                       EasyLoading.showInfo(
                                           "Green maximum Value cannot be lower than minimum");
+                                      greenMax = greenCache;
+                                      yellowMax = yellowCache;
+                                      controllerGreen.clear();
+                                      controllerYellow.clear();
+                                      controllerRed.clear();
                                     } else if (yellowMax < yellowMin) {
                                       EasyLoading.showInfo(
                                           "Yellow maximum Value cannot be lower than minimum");
+                                      greenMax = greenCache;
+                                      yellowMax = yellowCache;
+                                      controllerGreen.clear();
+                                      controllerYellow.clear();
+                                      controllerRed.clear();
                                     } else if (redMax < redMin) {
                                       EasyLoading.showInfo(
                                           "Red maximum Value cannot be lower than minimum");
+                                      greenMax = greenCache;
+                                      yellowMax = yellowCache;
+                                      controllerGreen.clear();
+                                      controllerYellow.clear();
+                                      controllerRed.clear();
                                     } else {
                                       Alert(
                                           closeFunction: () {
@@ -469,7 +677,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                         buttons: [
                                           DialogButton(
                                               onPressed: () {
-                                                flag = 0;
+                                                flag = 1;
                                                 greenMax = 1000.0;
                                                 yellowMin = 1001.0;
                                                 yellowMax = 1500.0;
