@@ -12,7 +12,7 @@ class StreamCard extends StatelessWidget {
 
   final Color barColor;
   final String co2;
-  final int calibrationFlag;
+  final bool calibrationFlag;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class StreamCard extends StatelessWidget {
               ]),
             ),
             SizedBox(height: 15.0),
-            calibrationFlag == 0
+            !calibrationFlag
                 ? RichText(
                     text: TextSpan(children: [
                       TextSpan(

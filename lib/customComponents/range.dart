@@ -2,21 +2,23 @@ import 'package:ble_splash_x/constants/constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Range extends StatelessWidget {
-  Range(
-      {Key? key,
-      required this.min,
-      required this.function,
-      required this.color,
-      required this.controller,
-      required this.Hint})
-      : super(key: key);
+class RangeContainer extends StatelessWidget {
+  RangeContainer({
+    Key? key,
+    required this.min,
+    required this.function,
+    required this.color,
+    required this.controller,
+    required this.Hint,
+  }) : super(key: key);
 
   final double min;
   final void Function(String) function;
+
   final Color color;
   final TextEditingController controller;
   final String Hint;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,18 +51,19 @@ class Range extends StatelessWidget {
               )),
           Container(
               width: 110.0,
-              height: 40.0,
+              height: 39.0,
               child: TextField(
                   textAlign: TextAlign.center,
                   controller: controller,
                   onChanged: function,
                   decoration: InputDecoration(
-                    hintText: Hint,
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    labelText: Hint,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(2.0)),
                     ),
                     contentPadding:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
                     enabledBorder: KoutlineInputBorder,
                     focusedBorder: KoutlineInputBorder,
                   )),
