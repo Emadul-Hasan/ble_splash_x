@@ -18,6 +18,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   List scannedDevicesName = [];
   List<BluetoothDevice> scannedDevice = [];
   FlutterBlue flutterBlue = FlutterBlue.instance;
+  var subscription;
 
   void loadingIgnite() async {
     EasyLoading.instance.maskType = EasyLoadingMaskType.black;
@@ -35,7 +36,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     flutterBlue.startScan(timeout: Duration(seconds: 5));
 
 // Listen to scan results
-    var subscription = flutterBlue.scanResults.listen((results) {
+    subscription = flutterBlue.scanResults.listen((results) {
       if (results.length == 0) {
         setState(() {});
       }
@@ -65,7 +66,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   void dispose() {
     scannedDevice.clear();
     scannedDevicesName.clear();
-
+    subscription.cancel();
     super.dispose();
   }
 

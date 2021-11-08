@@ -56,13 +56,14 @@ class _AppHomePageState extends State<AppHomePage> {
 
   String co2 = "0.0";
   double greenMin = 400;
-  double greenMax = 1000;
+  double greenMax = 2000;
   double greenMaxRange = 2000;
+  int greenCurrentValue = 0;
 
   double yellowMin = 1001.0;
-  double yellowMax = 1500;
+  double yellowMax = 3000;
   double yellowMaxRange = 3000.0;
-
+  int yellowMaxCurrentValue = 0;
   double redMin = 1501.0;
 
   bool saveButtonColorFlag = false;
@@ -458,15 +459,7 @@ class _AppHomePageState extends State<AppHomePage> {
                         yellowValueCache = _data[2];
                         greenMax = double.parse(_data[1]);
                         yellowMin = double.parse(_data[1]) + 1;
-                        // greenValueTrail = greenCache;
-                        // yellowMin = greenCache + 1;
-                        // greenMax = greenCache;
-                        // yellowMax = yellowCache;
-                        // redMin = yellowCache + 1;
-                        // greenMaxHint =
-                        //     double.parse(_data[1]).round().toString();
-                        // yellowMaxHint =
-                        //     double.parse(_data[2]).round().toString();
+                        yellowMax = double.parse(_data[2]);
                       } else if (double.tryParse(_data[0]) != null) {
                         co2 = _data[0];
                         value = double.parse(co2);
@@ -515,18 +508,23 @@ class _AppHomePageState extends State<AppHomePage> {
                           min: 400,
                           color: Colors.green,
                           function: (value) {
-                            if (double.parse(value) > 400.0 &&
-                                double.parse(value) <= greenMaxRange) {
+                            if (double.parse(value) < greenMaxRange + 1 &&
+                                double.parse(value) > greenMin) {
+                              greenCurrentValue = 0;
                               greenMax = double.parse(value);
-                              saveButtonColorFlag = true;
-                            } else if (double.parse(value) > 2000) {
+                            } else if (double.parse(value) > greenMaxRange) {
+                              greenCurrentValue = 0;
                               EasyLoading.showInfo(
-                                  "Expected Value within 400-2000");
+                                  "Green Value expected 400-2000");
+                            } else if (double.parse(value) > 9.0 &&
+                                double.parse(value) <= 400) {
+                              greenCurrentValue = 1;
                             } else {
-                              saveButtonColorFlag = false;
+                              greenCurrentValue = 0;
                               greenMax = double.parse(greenValueCache);
-                              yellowMin = double.parse(greenValueCache) + 1;
                             }
+
+                            saveButtonColorFlag = true;
                           },
                           controller: controllerGreen,
                         ),
@@ -538,20 +536,24 @@ class _AppHomePageState extends State<AppHomePage> {
                               : yellowMin,
                           color: Colors.yellow,
                           function: (value) {
-                            if (double.parse(value) > greenMax &&
-                                double.parse(value) <= yellowMaxRange) {
+                            if (double.parse(value) > greenMax + 1 &&
+                                double.parse(value) < 3001) {
+                              yellowMaxCurrentValue = 0;
                               yellowMax = double.parse(value);
                               redMin = yellowMax + 1;
-                              saveButtonColorFlagForYellow = true;
-                              // colorFlag = 0;
-                            } else if (double.parse(value) > yellowMaxRange) {
+                            } else if (double.parse(value) > 3000) {
+                              yellowMaxCurrentValue = 0;
                               EasyLoading.showInfo(
-                                  "Expected Value within ${greenMax.round() + 1}-3000");
+                                  "Green Value expected ${greenMax.round() + 1}-3000");
+                            } else if (double.parse(value) > 9.0 &&
+                                double.parse(value) <= greenMax + 1) {
+                              yellowMaxCurrentValue = 1;
                             } else {
-                              saveButtonColorFlag = false;
+                              yellowMaxCurrentValue = 0;
                               yellowMax = double.parse(yellowValueCache);
-                              redMin = double.parse(yellowValueCache) + 1;
+                              redMin = yellowMax + 1;
                             }
+                            saveButtonColorFlag = true;
                           },
                           controller: controllerYellow,
                         ),
@@ -619,44 +621,25 @@ class _AppHomePageState extends State<AppHomePage> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: (saveButtonColorFlag ||
-                                          saveButtonColorFlagForYellow)
+                                  onPressed: saveButtonColorFlag
                                       ? () {
-                                          print(greenMax);
-                                          print(yellowMax);
-                                          if (saveButtonColorFlag == false ||
-                                              !saveButtonColorFlagForYellow ==
-                                                  false) {
+                                          print(
+                                              "Yellow Current Value=$yellowMaxCurrentValue**");
+                                          if (greenCurrentValue == 1) {
                                             EasyLoading.showInfo(
-                                                "Value Error\nPlease put valid value for green & yellow");
-                                          }
-                                          if (greenMax < greenMin ||
-                                              greenMax > greenMaxRange) {
+                                                "Green Maximum value cannot be lower or equal to minimum value");
+                                          } else if (yellowMaxCurrentValue ==
+                                              1) {
                                             EasyLoading.showInfo(
-                                                "Green maximum Value cannot be lower than minimum");
-                                            // greenMax = greenCache;
-                                            // yellowMax = yellowCache;
-                                            // controllerGreen.clear();
-                                            // controllerYellow.clear();
-                                            // controllerRed.clear();
-                                          } else if (yellowMax < greenMax + 1 ||
-                                              yellowMax > yellowMaxRange) {
-                                            EasyLoading.showInfo(
-                                                "Yellow maximum Value cannot be lower than minimum");
-                                            // greenMax = greenCache;
-                                            // yellowMax = yellowCache;
-                                            // controllerGreen.clear();
-                                            // controllerYellow.clear();
-                                            // controllerRed.clear();
-                                          } else {
+                                                "Yellow Maximum value cannot be lower or equal to minimum value");
+                                          } else if (greenCurrentValue == 0 &&
+                                              yellowMaxCurrentValue == 0) {
                                             Alert(
                                                 closeFunction: () {
                                                   Navigator.pop(context);
-                                                  // greenMax = greenCache;
-                                                  // yellowMax = yellowCache;
-                                                  // controllerRed.clear();
-                                                  // controllerYellow.clear();
-                                                  // controllerGreen.clear();
+                                                  redMin = double.parse(
+                                                          yellowValueCache) +
+                                                      1;
                                                 },
                                                 context: context,
                                                 title: "Confirmation",
@@ -666,10 +649,11 @@ class _AppHomePageState extends State<AppHomePage> {
                                                   DialogButton(
                                                       onPressed: () {
                                                         Navigator.pop(context);
+                                                        print(greenMax);
+                                                        print(yellowMax);
                                                         String limit =
                                                             'R+$greenMax+$yellowMax+';
                                                         // sendData(limit);
-                                                        // colorFlag = 1;
 
                                                         EasyLoading.showSuccess(
                                                             "Success");
@@ -678,18 +662,23 @@ class _AppHomePageState extends State<AppHomePage> {
                                                   DialogButton(
                                                       onPressed: () {
                                                         Navigator.pop(context);
-                                                        // greenMax = greenCache;
-                                                        // yellowMax = yellowCache;
-                                                        // controllerRed.clear();
                                                         // controllerYellow
                                                         //     .clear();
                                                         // controllerGreen.clear();
+                                                        // redMin = double.parse(
+                                                        //         yellowValueCache) +
+                                                        //     1;
                                                       },
                                                       child: Text("No")),
                                                 ]).show();
                                           }
                                         }
-                                      : null,
+                                      // else {
+                                      //   EasyLoading.showInfo(
+                                      //       "Maximum Value Cannot be Lower Than Minimum");
+                                      // }
+
+                                      : () {},
                                   child: Text("Save"),
                                   style: ButtonStyle(
                                       backgroundColor: MaterialStateProperty
@@ -725,12 +714,16 @@ class _AppHomePageState extends State<AppHomePage> {
                                                       Navigator.pop(context);
                                                       factoryButtonColorFlag =
                                                           false;
-                                                      await sendData(
-                                                          "R+1000+1500");
+                                                      // await sendData(
+                                                      //     "R+1000+1500");
                                                       greenValueCache = '1000';
                                                       yellowValueCache = '1500';
                                                       greenMax = 1000.0;
                                                       yellowMax = 1500.0;
+                                                      yellowMin = 10001.0;
+                                                      redMin = 1501.0;
+                                                      controllerGreen.clear();
+                                                      controllerYellow.clear();
                                                     },
                                                     child: Text("Yes")),
                                                 DialogButton(
@@ -740,7 +733,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                                     child: Text("No")),
                                               ]).show();
                                         }
-                                      : null,
+                                      : () {},
                                   child: Text("Factory Default"),
                                 ),
                               ),
