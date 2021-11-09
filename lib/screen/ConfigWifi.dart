@@ -169,6 +169,12 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
     controller3.text = newPass;
   }
 
+  Future<bool> _onBackPressed() async {
+    Navigator.pushReplacementNamed(context, Homepage.id,
+        arguments: widget.device);
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -178,264 +184,269 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // resizeToAvoidBottomInset: false,
-      bottomNavigationBar: Container(
-        color: Colors.white30,
-        child: Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.black26),
-                ),
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, Homepage.id,
-                      arguments: widget.device);
-                },
-                child: Text(
-                  "Config CO2",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 2.0,
-              height: 10.0,
-              indent: 0.5,
-              color: Colors.redAccent,
-            ),
-            Expanded(
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.white),
-                ),
-                onPressed: () {},
-                child: Text(
-                  "Config Wifi",
-                  style: TextStyle(color: Colors.black),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        // resizeToAvoidBottomInset: false,
+        bottomNavigationBar: Container(
+          color: Colors.white30,
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.black26),
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, Homepage.id,
+                        arguments: widget.device);
+                  },
+                  child: Text(
+                    "Config CO2",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
-            ),
-          ],
+              Divider(
+                thickness: 2.0,
+                height: 10.0,
+                indent: 0.5,
+                color: Colors.redAccent,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    "Config Wifi",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      appBar: AppBar(
-        title: Text(widget.device.name),
-        backgroundColor: Colors.black38,
-      ),
-      drawer: DrawerCustom(
-        device: widget.device,
-        request: false,
-      ),
-      body: isReady == false
-          ? Center(
-              child: Text("Reading Data...."),
-            )
-          : Container(
-              child: StreamBuilder<List>(
-                stream: stream,
-                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-                  if (snapshot.hasError) {
-                    Timer(Duration(seconds: 4), () {
-                      print('done');
-                    });
-                    return Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.lightBlueAccent,
-                      ),
-                    );
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    try {
-                      while (wifiDataController < 15) {
-                        Timer(Duration(seconds: 3), () async {
-                          await sendData("SSID+");
-                          print("Asking for Data");
-                        });
-                        wifiDataController++;
-                      }
-
-                      var x = _dataParser(snapshot.data as List<int>);
-                      var _data = x.split('+');
-                      if (_data.length > 1) {
-                        if (_data[0] == '1') {
-                          controller1.text = _data[1];
-                          oldSSID = _data[1];
-                          connected = true;
-                        } else if (_data[0] == "0") {
-                          oldSSID = _data[1];
-                          connected = false;
-                        }
-                        if (_data[2] == "OK") {
-                          network = "OK";
-                        } else if (_data[2] == "NOK") {
-                          network = "NOT OK";
-                        }
-                      }
-                      // print(_data);
-
-                    } catch (e) {
-                      print(e);
-                    }
-                  }
-                  checkConnectionState();
-
-                  return SingleChildScrollView(
-                    reverse: true,
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        WiFiStatusText(connected: connected, network: network),
-                        Column(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(top: 10.0),
-                              child: Text(
-                                "Connected SSID",
-                                style:
-                                    TextStyle(fontSize: KTextSizeofWifiConfig),
-                              ),
-                            ),
-                            Container(
-                                margin: EdgeInsets.only(top: 10.0),
-                                width: 220.0,
-                                padding: EdgeInsets.only(
-                                    left: 20.0,
-                                    right: 20.0,
-                                    top: 10.0,
-                                    bottom: 10.0),
-                                child: Text(
-                                  "$oldSSID",
-                                  style: TextStyle(fontSize: 16.0),
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFEDEDED),
-                                  border: Border.all(
-                                    color: Color(0xFFEDEDED),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                )),
-                            Container(
-                              margin: EdgeInsets.only(top: 10.0),
-                              child: Text("New SSID",
-                                  style: TextStyle(
-                                      fontSize: KTextSizeofWifiConfig)),
-                            ),
-                            Inputfield(
-                              controller: controller2,
-                              obscuretext: false,
-                              margin: 10.0,
-                              keyBoardtype: TextInputType.emailAddress,
-                              function: (value) {
-                                newSSID = value;
-                              },
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 10.0),
-                              child: Text("New Password",
-                                  style: TextStyle(
-                                      fontSize: KTextSizeofWifiConfig)),
-                            ),
-                            Inputfield(
-                              controller: controller3,
-                              obscuretext: false,
-                              margin: 10.0,
-                              keyBoardtype: TextInputType.emailAddress,
-                              function: (value) {
-                                newPass = value;
-                              },
-                            ),
-                          ],
+        appBar: AppBar(
+          title: Text(widget.device.name),
+          backgroundColor: Colors.black38,
+        ),
+        drawer: DrawerCustom(
+          device: widget.device,
+          request: false,
+        ),
+        body: isReady == false
+            ? Center(
+                child: Text("Reading Data...."),
+              )
+            : Container(
+                child: StreamBuilder<List>(
+                  stream: stream,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<List> snapshot) {
+                    if (snapshot.hasError) {
+                      Timer(Duration(seconds: 4), () {
+                        print('done');
+                      });
+                      return Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.lightBlueAccent,
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      );
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.active) {
+                      try {
+                        while (wifiDataController < 15) {
+                          Timer(Duration(seconds: 3), () async {
+                            await sendData("SSID+");
+                            print("Asking for Data");
+                          });
+                          wifiDataController++;
+                        }
+
+                        var x = _dataParser(snapshot.data as List<int>);
+                        var _data = x.split('+');
+                        if (_data.length > 1) {
+                          if (_data[0] == '1') {
+                            controller1.text = _data[1];
+                            oldSSID = _data[1];
+                            connected = true;
+                          } else if (_data[0] == "0") {
+                            oldSSID = _data[1];
+                            connected = false;
+                          }
+                          if (_data[2] == "OK") {
+                            network = "OK";
+                          } else if (_data[2] == "NOK") {
+                            network = "NOT OK";
+                          }
+                        }
+                        // print(_data);
+
+                      } catch (e) {
+                        print(e);
+                      }
+                    }
+                    checkConnectionState();
+
+                    return SingleChildScrollView(
+                      reverse: true,
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          WiFiStatusText(
+                              connected: connected, network: network),
+                          Column(
                             children: [
-                              IconButton(
-                                icon: Icon(
-                                  MdiIcons.qrcodeScan,
-                                  size: 30.0,
-                                ),
-                                onPressed: scanData,
-                              ),
-                              TextButton(
+                              Container(
+                                margin: EdgeInsets.only(top: 10.0),
                                 child: Text(
-                                  "Scan QR Code",
-                                  style: TextStyle(color: Colors.black),
+                                  "Connected SSID",
+                                  style: TextStyle(
+                                      fontSize: KTextSizeofWifiConfig),
                                 ),
-                                onPressed: scanData,
+                              ),
+                              Container(
+                                  margin: EdgeInsets.only(top: 10.0),
+                                  width: 220.0,
+                                  padding: EdgeInsets.only(
+                                      left: 20.0,
+                                      right: 20.0,
+                                      top: 10.0,
+                                      bottom: 10.0),
+                                  child: Text(
+                                    "$oldSSID",
+                                    style: TextStyle(fontSize: 16.0),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFEDEDED),
+                                    border: Border.all(
+                                      color: Color(0xFFEDEDED),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  )),
+                              Container(
+                                margin: EdgeInsets.only(top: 10.0),
+                                child: Text("New SSID",
+                                    style: TextStyle(
+                                        fontSize: KTextSizeofWifiConfig)),
+                              ),
+                              Inputfield(
+                                controller: controller2,
+                                obscuretext: false,
+                                margin: 10.0,
+                                keyBoardtype: TextInputType.emailAddress,
+                                function: (value) {
+                                  newSSID = value;
+                                },
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 10.0),
+                                child: Text("New Password",
+                                    style: TextStyle(
+                                        fontSize: KTextSizeofWifiConfig)),
+                              ),
+                              Inputfield(
+                                controller: controller3,
+                                obscuretext: false,
+                                margin: 10.0,
+                                keyBoardtype: TextInputType.emailAddress,
+                                function: (value) {
+                                  newPass = value;
+                                },
                               ),
                             ],
                           ),
-                        ),
-                        ElevatedButton(
-                            onPressed: () async {
-                              // Sending SSID
+                          Container(
+                            margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    MdiIcons.qrcodeScan,
+                                    size: 30.0,
+                                  ),
+                                  onPressed: scanData,
+                                ),
+                                TextButton(
+                                  child: Text(
+                                    "Scan QR Code",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  onPressed: scanData,
+                                ),
+                              ],
+                            ),
+                          ),
+                          ElevatedButton(
+                              onPressed: () async {
+                                // Sending SSID
 
-                              if (newSSID.length <= 14) {
-                                String text = "S+1+$newSSID+";
-                                await sendData(text);
-                              }
-                              if (newPass.length <= 14) {
-                                String text = "P+1+$newPass+";
-                                await sendData(text);
-                              }
+                                if (newSSID.length <= 14) {
+                                  String text = "S+1+$newSSID+";
+                                  await sendData(text);
+                                }
+                                if (newPass.length <= 14) {
+                                  String text = "P+1+$newPass+";
+                                  await sendData(text);
+                                }
 
-                              if (newSSID.length > 14) {
-                                String halfSSID = "";
-                                for (int i = 0; i < 14; i++) {
-                                  halfSSID += newSSID[i];
+                                if (newSSID.length > 14) {
+                                  String halfSSID = "";
+                                  for (int i = 0; i < 14; i++) {
+                                    halfSSID += newSSID[i];
+                                  }
+                                  String newHalfSSID = "S+2+$halfSSID+";
+                                  print("half: $newHalfSSID");
+                                  await sendData(newHalfSSID);
+                                  var secondHalfSSID = "";
+                                  for (int i = 14; i < newSSID.length; i++) {
+                                    secondHalfSSID += newSSID[i];
+                                  }
+                                  Timer(const Duration(seconds: 2), () async {
+                                    String newSecondHalfSSID =
+                                        "S+2+$secondHalfSSID+";
+                                    print("half: $newSecondHalfSSID");
+                                    await sendData(newSecondHalfSSID);
+                                  });
                                 }
-                                String newHalfSSID = "S+2+$halfSSID+";
-                                print("half: $newHalfSSID");
-                                await sendData(newHalfSSID);
-                                var secondHalfSSID = "";
-                                for (int i = 14; i < newSSID.length; i++) {
-                                  secondHalfSSID += newSSID[i];
-                                }
-                                Timer(const Duration(seconds: 2), () async {
-                                  String newSecondHalfSSID =
-                                      "S+2+$secondHalfSSID+";
-                                  print("half: $newSecondHalfSSID");
-                                  await sendData(newSecondHalfSSID);
-                                });
-                              }
-                              // sleep(Duration(milliseconds: 800));
+                                // sleep(Duration(milliseconds: 800));
 
-                              if (newPass.length > 14) {
-                                String halfPass = "";
-                                for (int i = 0; i < 14; i++) {
-                                  halfPass += newPass[i];
+                                if (newPass.length > 14) {
+                                  String halfPass = "";
+                                  for (int i = 0; i < 14; i++) {
+                                    halfPass += newPass[i];
+                                  }
+                                  String newHalfPass = "P+2+$halfPass+";
+                                  await sendData(newHalfPass);
+                                  var secondHalfPass = "";
+                                  for (int i = 14; i < newPass.length; i++) {
+                                    secondHalfPass += newPass[i];
+                                  }
+                                  Timer(const Duration(seconds: 2), () async {
+                                    String newSecondHalfPass =
+                                        "P+2+$secondHalfPass+";
+                                    await sendData(newSecondHalfPass);
+                                  });
                                 }
-                                String newHalfPass = "P+2+$halfPass+";
-                                await sendData(newHalfPass);
-                                var secondHalfPass = "";
-                                for (int i = 14; i < newPass.length; i++) {
-                                  secondHalfPass += newPass[i];
-                                }
-                                Timer(const Duration(seconds: 2), () async {
-                                  String newSecondHalfPass =
-                                      "P+2+$secondHalfPass+";
-                                  await sendData(newSecondHalfPass);
-                                });
-                              }
 
-                              controller1.clear();
-                              controller2.clear();
-                              controller3.clear();
-                              EasyLoading.showSuccess("SUCCESS");
-                            },
-                            child: Text("Save")),
-                      ],
-                    ),
-                  );
-                  //
-                },
+                                controller1.clear();
+                                controller2.clear();
+                                controller3.clear();
+                                EasyLoading.showSuccess("SUCCESS");
+                              },
+                              child: Text("Save")),
+                        ],
+                      ),
+                    );
+                    //
+                  },
+                ),
               ),
-            ),
+      ),
     );
   }
 }

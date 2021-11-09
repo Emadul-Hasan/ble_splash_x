@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:ble_splash_x/customComponents/range.dart';
@@ -9,6 +10,7 @@ import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:ble_splash_x/screen/discover.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -164,6 +166,42 @@ class _AppHomePageState extends State<AppHomePage> {
     });
   }
 
+  Future<bool> _onBackPressed() async {
+    Navigator.pushReplacementNamed(context, Homepage.id,
+        arguments: widget.device);
+    // return true;
+    final shouldPop = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Confirm'),
+          content: Text('Do you want to exit the App'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop(false); //Will not exit the App
+              },
+            ),
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                if (Platform.isAndroid) {
+                  widget.device.disconnect();
+                  SystemNavigator.pop();
+                } else {
+                  widget.device.disconnect();
+                  exit(0);
+                }
+              },
+            )
+          ],
+        );
+      },
+    );
+    return shouldPop ?? false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -179,573 +217,596 @@ class _AppHomePageState extends State<AppHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: Container(
-        color: Colors.white30,
-        child: Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.white),
-                ),
-                onPressed: () {
-                  // Do nothing
-                },
-                child: Text(
-                  "Config CO2",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 2.0,
-              height: 10.0,
-              indent: 0.5,
-              color: Colors.redAccent,
-            ),
-            Expanded(
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.black26),
-                ),
-                onPressed: () {
-                  setState(() {
-                    request = false;
-                  });
-                  Timer(Duration(seconds: 3), () async {
-                    await sendData("SSID+");
-                  });
-
-                  Navigator.pushNamed(context, ConfigWiFiPage.id,
-                      arguments: widget.device);
-                },
-                child: Text("Config Wifi"),
-              ),
-            ),
-          ],
-        ),
-      ),
-      appBar: AppBar(
-        title: Text(widget.device.name),
-        backgroundColor: Colors.black38,
-      ),
-      drawer: Drawer(
-        child: Container(
-          child: ListView(
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        bottomNavigationBar: Container(
+          color: Colors.white30,
+          child: Row(
             children: [
-              DrawerHeader(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    Center(
-                      child: Text(
-                        "SplashX",
-                        style: TextStyle(fontSize: 20.0),
-                      ),
-                    )
-                  ],
+              Expanded(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                  ),
+                  onPressed: () {
+                    // Do nothing
+                  },
+                  child: Text(
+                    "Config CO2",
+                    style: TextStyle(color: Colors.black),
+                  ),
                 ),
               ),
-              ListTile(
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Configure CO",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
-                      ),
-                      TextSpan(
-                        text: '2',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 12.0,
-                          fontFeatures: [
-                            FontFeature.subscripts(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                leading: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 10,
-                          color: Colors.black12,
-                          spreadRadius: 2)
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    child: Icon(
-                      MdiIcons.fire,
-                      color: Colors.black,
-                      size: 25.0,
-                    ),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, Homepage.id,
-                      arguments: widget.device);
-                },
+              Divider(
+                thickness: 2.0,
+                height: 10.0,
+                indent: 0.5,
+                color: Colors.redAccent,
               ),
-              ListTile(
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Configure Wifi",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
-                      ),
-                    ],
+              Expanded(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.black26),
                   ),
+                  onPressed: () {
+                    setState(() {
+                      request = false;
+                    });
+                    Timer(Duration(seconds: 3), () async {
+                      await sendData("SSID+");
+                    });
+
+                    Navigator.pushNamed(context, ConfigWiFiPage.id,
+                        arguments: widget.device);
+                  },
+                  child: Text("Config Wifi"),
                 ),
-                leading: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 10,
-                          color: Colors.black12,
-                          spreadRadius: 2)
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    child: Icon(
-                      MdiIcons.wifiSync,
-                      color: Colors.black,
-                      size: 25.0,
-                    ),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                onTap: () {
-                  setState(() {
-                    request = false;
-                  });
-                  Navigator.pushNamed(context, ConfigWiFiPage.id,
-                      arguments: widget.device);
-                },
-              ),
-              ListTile(
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Device Calibration",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
-                      ),
-                    ],
-                  ),
-                ),
-                leading: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 10,
-                          color: Colors.black12,
-                          spreadRadius: 2)
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    child: Icon(
-                      MdiIcons.reload,
-                      color: Colors.black,
-                      size: 25.0,
-                    ),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                onTap: () {
-                  setState(() {
-                    request = false;
-                  });
-                  Navigator.pushReplacementNamed(context, CalibrationPage.id,
-                      arguments: widget.device);
-                },
-              ),
-              ListTile(
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Logout",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
-                      ),
-                    ],
-                  ),
-                ),
-                leading: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 10,
-                          color: Colors.black12,
-                          spreadRadius: 2)
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    child: Icon(
-                      MdiIcons.logout,
-                      color: Colors.black,
-                      size: 25.0,
-                    ),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                onTap: () {
-                  widget.device.disconnect();
-                  Navigator.pushNamedAndRemoveUntil(context, DiscoverPage.id,
-                      (Route<dynamic> route) => false);
-                },
               ),
             ],
           ),
         ),
-      ),
-      body: isReady == false
-          ? Center(
-              child: Text("Reading Data...."),
-            )
-          : Container(
-              child: StreamBuilder<List>(
-                stream: stream,
-                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-                  if (snapshot.hasError) {
-                    Timer(Duration(seconds: 30), () {
-                      print('done');
-                    });
-                    return Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.lightBlueAccent,
+        appBar: AppBar(
+          title: Text(widget.device.name),
+          backgroundColor: Colors.black38,
+        ),
+        drawer: Drawer(
+          child: Container(
+            child: ListView(
+              children: [
+                DrawerHeader(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 30.0,
                       ),
-                    );
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    try {
-                      while (rangeController < 15) {
-                        Timer(Duration(seconds: 2), () async {
-                          await sendData("RR+");
-                        });
-                        rangeController++;
-                      }
-                      if (request) {
-                        Timer(Duration(seconds: 2), () async {
-                          await sendData("CO2+");
-                        });
-                      }
-
-                      var x = _dataParser(snapshot.data as List<int>);
-                      var _data = x.split('+');
-                      print(_data);
-
-                      if (_data[0] == "C") {
-                        calibrationFlag = true;
-                      } else if (_data[0] == "RR") {
-                        // Got Range value
-                        greenValueCache = _data[1];
-                        yellowValueCache = _data[2];
-                        greenMax = double.parse(_data[1]);
-                        yellowMin = double.parse(_data[1]) + 1;
-                        yellowMax = double.parse(_data[2]);
-                      } else if (double.tryParse(_data[0]) != null) {
-                        co2 = _data[0];
-                        value = double.parse(co2);
-                      }
-                      if (value < yellowMin) {
-                        barColor = Colors.green;
-                      } else if (value < redMin) {
-                        barColor = Colors.yellow;
-                      } else {
-                        barColor = Colors.red;
-                      }
-                      //
-                      if (greenMax != 1000.0 || yellowMax != 1500) {
-                        factoryButtonColorFlag = true;
-                      }
-                    } catch (e) {
-                      print(e);
-                    }
-                  }
-                  checkConnectionState();
-
-                  return SingleChildScrollView(
-                    reverse: true,
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      Center(
+                        child: Text(
+                          "SplashX",
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                ListTile(
+                  title: RichText(
+                    text: TextSpan(
                       children: [
-                        SizedBox(
-                          height: 20.0,
+                        TextSpan(
+                          text: "Configure CO",
+                          style: TextStyle(color: Colors.black, fontSize: 16.0),
                         ),
-                        StreamCard(
-                          barColor: barColor,
-                          co2: co2,
-                          calibrationFlag: calibrationFlag,
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        RangeSetHeading(),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        //################## Green Container ####################
-                        RangeContainer(
-                          Hint: greenValueCache,
-                          min: 400,
-                          color: Colors.green,
-                          function: (value) {
-                            if (double.parse(value) < greenMaxRange + 1 &&
-                                double.parse(value) > greenMin) {
-                              greenCurrentValue = 0;
-                              greenMax = double.parse(value);
-                            } else if (double.parse(value) > greenMaxRange) {
-                              greenCurrentValue = 0;
-                              EasyLoading.showInfo(
-                                  "Green Value expected 400-2000");
-                            } else if (double.parse(value) > 9.0 &&
-                                double.parse(value) <= 400) {
-                              greenCurrentValue = 1;
-                            } else {
-                              greenCurrentValue = 0;
-                              greenMax = double.parse(greenValueCache);
-                            }
-
-                            saveButtonColorFlag = true;
-                          },
-                          controller: controllerGreen,
-                        ),
-                        // ########## Yellow Container #############
-                        RangeContainer(
-                          Hint: yellowValueCache,
-                          min: (greenMax > 400 && greenMax < 2001)
-                              ? greenMax + 1
-                              : yellowMin,
-                          color: Colors.yellow,
-                          function: (value) {
-                            if (double.parse(value) > greenMax + 1 &&
-                                double.parse(value) < 3001) {
-                              yellowMaxCurrentValue = 0;
-                              yellowMax = double.parse(value);
-                              redMin = yellowMax + 1;
-                            } else if (double.parse(value) > 3000) {
-                              yellowMaxCurrentValue = 0;
-                              EasyLoading.showInfo(
-                                  "Green Value expected ${greenMax.round() + 1}-3000");
-                            } else if (double.parse(value) > 9.0 &&
-                                double.parse(value) <= greenMax + 1) {
-                              yellowMaxCurrentValue = 1;
-                            } else {
-                              yellowMaxCurrentValue = 0;
-                              yellowMax = double.parse(yellowValueCache);
-                              redMin = yellowMax + 1;
-                            }
-                            saveButtonColorFlag = true;
-                          },
-                          controller: controllerYellow,
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        // ######################### RED CONTAINER ###############
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            Container(
-                                padding: EdgeInsets.only(
-                                    left: 20.0,
-                                    right: 20.0,
-                                    top: 10.0,
-                                    bottom: 10.0),
-                                child: Text(redMin.round().toString()),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFEDEDED),
-                                  border: Border.all(
-                                    color: Color(0xFFEDEDED),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                )),
-                            Container(
-                                padding: EdgeInsets.all(10.0),
-                                child: Text(
-                                  '-',
-                                  style: TextStyle(fontSize: 20.0),
-                                )),
-                            Container(
-                                width: 110.0,
-                                height: 40.0,
-                                padding: EdgeInsets.only(
-                                    left: 20.0,
-                                    right: 20.0,
-                                    top: 10.0,
-                                    bottom: 10.0),
-                                child: Text(
-                                  '10000',
-                                  textAlign: TextAlign.center,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFEDEDED),
-                                  border: Border.all(
-                                    color: Color(0xFFEDEDED),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                )),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 30.0, vertical: 3.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: saveButtonColorFlag
-                                      ? () {
-                                          print(
-                                              "Yellow Current Value=$yellowMaxCurrentValue**");
-                                          if (greenCurrentValue == 1) {
-                                            EasyLoading.showInfo(
-                                                "Green Maximum value cannot be lower or equal to minimum value");
-                                          } else if (yellowMaxCurrentValue ==
-                                              1) {
-                                            EasyLoading.showInfo(
-                                                "Yellow Maximum value cannot be lower or equal to minimum value");
-                                          } else if (greenCurrentValue == 0 &&
-                                              yellowMaxCurrentValue == 0) {
-                                            Alert(
-                                                closeFunction: () {
-                                                  Navigator.pop(context);
-                                                  redMin = double.parse(
-                                                          yellowValueCache) +
-                                                      1;
-                                                },
-                                                context: context,
-                                                title: "Confirmation",
-                                                desc:
-                                                    "Are you sure to change the value to\n Green:${greenMin.round()} - ${greenMax.round()}\nYellow:${greenMax.round() + 1}-${yellowMax.round()}\nRed:${yellowMax.round() + 1}- 10000",
-                                                buttons: [
-                                                  DialogButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                        print(greenMax);
-                                                        print(yellowMax);
-                                                        String limit =
-                                                            'R+$greenMax+$yellowMax+';
-                                                        // sendData(limit);
-
-                                                        EasyLoading.showSuccess(
-                                                            "Success");
-                                                      },
-                                                      child: Text("Yes")),
-                                                  DialogButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                        // controllerYellow
-                                                        //     .clear();
-                                                        // controllerGreen.clear();
-                                                        // redMin = double.parse(
-                                                        //         yellowValueCache) +
-                                                        //     1;
-                                                      },
-                                                      child: Text("No")),
-                                                ]).show();
-                                          }
-                                        }
-                                      // else {
-                                      //   EasyLoading.showInfo(
-                                      //       "Maximum Value Cannot be Lower Than Minimum");
-                                      // }
-
-                                      : () {},
-                                  child: Text("Save"),
-                                  style: ButtonStyle(
-                                      backgroundColor: MaterialStateProperty
-                                          .resolveWith((states) =>
-                                              (saveButtonColorFlag ||
-                                                      saveButtonColorFlagForYellow)
-                                                  ? Colors.blueAccent
-                                                  : Colors.black26)),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10.0,
-                              ),
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) =>
-                                                  !factoryButtonColorFlag
-                                                      ? Colors.black26
-                                                      : Colors.blueAccent)),
-                                  onPressed: factoryButtonColorFlag
-                                      ? () {
-                                          Alert(
-                                              context: context,
-                                              title: "Confirmation",
-                                              desc:
-                                                  "Are you sure to change the value to default value",
-                                              buttons: [
-                                                DialogButton(
-                                                    onPressed: () async {
-                                                      Navigator.pop(context);
-                                                      factoryButtonColorFlag =
-                                                          false;
-                                                      // await sendData(
-                                                      //     "R+1000+1500");
-                                                      greenValueCache = '1000';
-                                                      yellowValueCache = '1500';
-                                                      greenMax = 1000.0;
-                                                      yellowMax = 1500.0;
-                                                      yellowMin = 10001.0;
-                                                      redMin = 1501.0;
-                                                      controllerGreen.clear();
-                                                      controllerYellow.clear();
-                                                    },
-                                                    child: Text("Yes")),
-                                                DialogButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text("No")),
-                                              ]).show();
-                                        }
-                                      : () {},
-                                  child: Text("Factory Default"),
-                                ),
-                              ),
+                        TextSpan(
+                          text: '2',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12.0,
+                            fontFeatures: [
+                              FontFeature.subscripts(),
                             ],
                           ),
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                  leading: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 10,
+                            color: Colors.black12,
+                            spreadRadius: 2)
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      child: Icon(
+                        MdiIcons.fire,
+                        color: Colors.black,
+                        size: 25.0,
+                      ),
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, Homepage.id,
+                        arguments: widget.device);
+                  },
+                ),
+                ListTile(
+                  title: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Configure Wifi",
+                          style: TextStyle(color: Colors.black, fontSize: 16.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  leading: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 10,
+                            color: Colors.black12,
+                            spreadRadius: 2)
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      child: Icon(
+                        MdiIcons.wifiSync,
+                        color: Colors.black,
+                        size: 25.0,
+                      ),
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      request = false;
+                    });
+                    Navigator.pushNamed(context, ConfigWiFiPage.id,
+                        arguments: widget.device);
+                  },
+                ),
+                ListTile(
+                  title: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Device Calibration",
+                          style: TextStyle(color: Colors.black, fontSize: 16.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  leading: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 10,
+                            color: Colors.black12,
+                            spreadRadius: 2)
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      child: Icon(
+                        MdiIcons.reload,
+                        color: Colors.black,
+                        size: 25.0,
+                      ),
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      request = false;
+                    });
+                    Navigator.pushReplacementNamed(context, CalibrationPage.id,
+                        arguments: widget.device);
+                  },
+                ),
+                ListTile(
+                  title: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Logout",
+                          style: TextStyle(color: Colors.black, fontSize: 16.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  leading: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 10,
+                            color: Colors.black12,
+                            spreadRadius: 2)
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      child: Icon(
+                        MdiIcons.logout,
+                        color: Colors.black,
+                        size: 25.0,
+                      ),
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    widget.device.disconnect();
+                    Navigator.pushNamedAndRemoveUntil(context, DiscoverPage.id,
+                        (Route<dynamic> route) => false);
+                  },
+                ),
+              ],
             ),
+          ),
+        ),
+        body: isReady == false
+            ? Center(
+                child: Text("Reading Data...."),
+              )
+            : Container(
+                child: StreamBuilder<List>(
+                  stream: stream,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<List> snapshot) {
+                    if (snapshot.hasError) {
+                      Timer(Duration(seconds: 30), () {
+                        print('done');
+                      });
+                      return Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.lightBlueAccent,
+                        ),
+                      );
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.active) {
+                      try {
+                        while (rangeController < 15) {
+                          Timer(Duration(seconds: 2), () async {
+                            await sendData("RR+");
+                          });
+                          rangeController++;
+                        }
+                        if (request) {
+                          Timer(Duration(seconds: 2), () async {
+                            await sendData("CO2+");
+                          });
+                        }
+
+                        var x = _dataParser(snapshot.data as List<int>);
+                        var _data = x.split('+');
+                        print(_data);
+
+                        if (_data[0] == "C") {
+                          calibrationFlag = true;
+                        } else if (_data[0] == "RR") {
+                          // Got Range value
+                          greenValueCache = _data[1];
+                          yellowValueCache = _data[2];
+                          greenMax = double.parse(_data[1]);
+                          yellowMin = double.parse(_data[1]) + 1;
+                          yellowMax = double.parse(_data[2]);
+                          redMin = yellowMax + 1;
+                        } else if (double.tryParse(_data[0]) != null) {
+                          co2 = _data[0];
+                          value = double.parse(co2);
+                        }
+                        if (value < yellowMin) {
+                          barColor = Colors.green;
+                        } else if (value < redMin) {
+                          barColor = Colors.yellow;
+                        } else {
+                          barColor = Colors.red;
+                        }
+                        //
+                        if (greenMax != 1000.0 || yellowMax != 1500) {
+                          factoryButtonColorFlag = true;
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
+                    }
+                    checkConnectionState();
+
+                    return SingleChildScrollView(
+                      reverse: true,
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          StreamCard(
+                            barColor: barColor,
+                            co2: co2,
+                            calibrationFlag: calibrationFlag,
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          RangeSetHeading(),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          //################## Green Container ####################
+                          RangeContainer(
+                            Hint: greenValueCache,
+                            min: 400,
+                            color: Colors.green,
+                            function: (value) {
+                              if (double.parse(value) < greenMaxRange + 1 &&
+                                  double.parse(value) > greenMin) {
+                                greenCurrentValue = 0;
+                                greenMax = double.parse(value);
+                              } else if (double.parse(value) > greenMaxRange) {
+                                greenCurrentValue = 0;
+                                EasyLoading.showInfo(
+                                    "Green Value expected 400-2000");
+                              } else if (double.parse(value) > 9.0 &&
+                                  double.parse(value) <= 400) {
+                                greenCurrentValue = 1;
+                              } else {
+                                greenCurrentValue = 0;
+                                greenMax = double.parse(greenValueCache);
+                              }
+
+                              saveButtonColorFlag = true;
+                            },
+                            controller: controllerGreen,
+                          ),
+                          // ########## Yellow Container #############
+                          RangeContainer(
+                            Hint: yellowValueCache,
+                            min: (greenMax > 400 && greenMax < 2001)
+                                ? greenMax + 1
+                                : yellowMin,
+                            color: Colors.yellow,
+                            function: (value) {
+                              if (double.parse(value) > greenMax + 1 &&
+                                  double.parse(value) < 3001) {
+                                yellowMaxCurrentValue = 0;
+                                yellowMax = double.parse(value);
+                                redMin = yellowMax + 1;
+                              } else if (double.parse(value) > 3000) {
+                                yellowMaxCurrentValue = 0;
+                                EasyLoading.showInfo(
+                                    "Green Value expected ${greenMax.round() + 1}-3000");
+                              } else if (double.parse(value) > 9.0 &&
+                                  double.parse(value) <= greenMax + 1) {
+                                yellowMaxCurrentValue = 1;
+                              } else {
+                                yellowMaxCurrentValue = 0;
+                                yellowMax = double.parse(yellowValueCache);
+                                redMin = yellowMax + 1;
+                              }
+                              saveButtonColorFlag = true;
+                            },
+                            controller: controllerYellow,
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          // ######################### RED CONTAINER ###############
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.red,
+                              ),
+                              SizedBox(
+                                width: 10.0,
+                              ),
+                              Container(
+                                  padding: EdgeInsets.only(
+                                      left: 20.0,
+                                      right: 20.0,
+                                      top: 10.0,
+                                      bottom: 10.0),
+                                  child: Text(redMin.round().toString()),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFEDEDED),
+                                    border: Border.all(
+                                      color: Color(0xFFEDEDED),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  )),
+                              Container(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Text(
+                                    '-',
+                                    style: TextStyle(fontSize: 20.0),
+                                  )),
+                              Container(
+                                  width: 110.0,
+                                  height: 40.0,
+                                  padding: EdgeInsets.only(
+                                      left: 20.0,
+                                      right: 20.0,
+                                      top: 10.0,
+                                      bottom: 10.0),
+                                  child: Text(
+                                    '10000',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFEDEDED),
+                                    border: Border.all(
+                                      color: Color(0xFFEDEDED),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  )),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30.0, vertical: 3.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: saveButtonColorFlag
+                                        ? () {
+                                            print(
+                                                "Yellow Current Value=$yellowMaxCurrentValue**");
+                                            if (greenCurrentValue == 1) {
+                                              EasyLoading.showInfo(
+                                                  "Green Maximum value cannot be lower or equal to minimum value");
+                                            } else if (yellowMaxCurrentValue ==
+                                                1) {
+                                              EasyLoading.showInfo(
+                                                  "Yellow Maximum value cannot be lower or equal to minimum value");
+                                            } else if (greenCurrentValue == 0 &&
+                                                yellowMaxCurrentValue == 0) {
+                                              print(
+                                                  "Green Max: $greenMax, YellowMax: $yellowMax");
+                                              if (greenMax.round() + 1 >
+                                                  yellowMax) {
+                                                EasyLoading.showInfo(
+                                                    "Yellow Maximum value cannot be lower or equal to minimum value");
+                                              } else {
+                                                Alert(
+                                                    closeFunction: () {
+                                                      Navigator.pop(context);
+                                                      redMin = double.parse(
+                                                              yellowValueCache) +
+                                                          1;
+                                                    },
+                                                    context: context,
+                                                    title: "Confirmation",
+                                                    desc:
+                                                        "Are you sure to change the value to\n Green:${greenMin.round()} - ${greenMax.round()}\nYellow:${greenMax.round() + 1}-${yellowMax.round()}\nRed:${yellowMax.round() + 1}- 10000",
+                                                    buttons: [
+                                                      DialogButton(
+                                                          onPressed: () async {
+                                                            Navigator.pop(
+                                                                context);
+                                                            print(greenMax);
+                                                            print(yellowMax);
+                                                            String limit =
+                                                                'R+$greenMax+$yellowMax+';
+                                                            await sendData(
+                                                                limit);
+
+                                                            EasyLoading
+                                                                .showSuccess(
+                                                                    "Success");
+                                                            saveButtonColorFlag =
+                                                                false;
+                                                          },
+                                                          child: Text("Yes")),
+                                                      DialogButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                            // controllerYellow
+                                                            //     .clear();
+                                                            // controllerGreen.clear();
+                                                            // redMin = double.parse(
+                                                            //         yellowValueCache) +
+                                                            //     1;
+                                                          },
+                                                          child: Text("No")),
+                                                    ]).show();
+                                              }
+                                            }
+                                          }
+                                        // else {
+                                        //   EasyLoading.showInfo(
+                                        //       "Maximum Value Cannot be Lower Than Minimum");
+                                        // }
+
+                                        : () {},
+                                    child: Text("Save"),
+                                    style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty
+                                            .resolveWith((states) =>
+                                                (saveButtonColorFlag ||
+                                                        saveButtonColorFlagForYellow)
+                                                    ? Colors.blueAccent
+                                                    : Colors.black26)),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10.0,
+                                ),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.resolveWith(
+                                                (states) =>
+                                                    !factoryButtonColorFlag
+                                                        ? Colors.black26
+                                                        : Colors.blueAccent)),
+                                    onPressed: factoryButtonColorFlag
+                                        ? () {
+                                            Alert(
+                                                context: context,
+                                                title: "Confirmation",
+                                                desc:
+                                                    "Are you sure to change the value to default value",
+                                                buttons: [
+                                                  DialogButton(
+                                                      onPressed: () async {
+                                                        Navigator.pop(context);
+                                                        controllerGreen.clear();
+                                                        controllerYellow
+                                                            .clear();
+                                                        factoryButtonColorFlag =
+                                                            false;
+                                                        await sendData(
+                                                            "R+1000+1500");
+                                                        greenValueCache =
+                                                            '1000';
+                                                        yellowValueCache =
+                                                            '1500';
+
+                                                        greenMax = 1000.0;
+                                                        yellowMax = 1500.0;
+                                                        yellowMin = 10001.0;
+                                                        redMin = 1501.0;
+                                                      },
+                                                      child: Text("Yes")),
+                                                  DialogButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("No")),
+                                                ]).show();
+                                          }
+                                        : () {},
+                                    child: Text("Factory Default"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+      ),
     );
   }
 

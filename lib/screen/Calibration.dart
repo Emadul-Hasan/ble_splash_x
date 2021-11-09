@@ -135,7 +135,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   }
 
   Future<bool> _onBackPressed() async {
-    Navigator.pushNamed(context, Homepage.id, arguments: widget.device);
+    Navigator.pushReplacementNamed(context, Homepage.id, arguments: widget.device);
     return true;
     // final shouldPop = await showDialog(
     //   context: context,
@@ -245,7 +245,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                           MaterialStateProperty.resolveWith(
                                               (states) => Colors.blueAccent)),
                                   onPressed: () {
-                                    // await sendData("C+");
+
                                     Alert(
                                         context: context,
                                         title: "Confirmation",
