@@ -167,8 +167,6 @@ class _AppHomePageState extends State<AppHomePage> {
   }
 
   Future<bool> _onBackPressed() async {
-    Navigator.pushReplacementNamed(context, Homepage.id,
-        arguments: widget.device);
     // return true;
     final shouldPop = await showDialog(
       context: context,
