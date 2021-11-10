@@ -25,7 +25,7 @@ class StreamCard extends StatelessWidget {
           border: Border(
             top: BorderSide(
               color: barColor,
-              width: 3.0,
+              width: 4.0,
             ),
           ),
         ),

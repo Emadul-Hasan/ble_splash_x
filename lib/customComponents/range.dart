@@ -53,6 +53,7 @@ class RangeContainer extends StatelessWidget {
               width: 110.0,
               height: 39.0,
               child: TextField(
+                  keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
                   controller: controller,
                   onChanged: function,

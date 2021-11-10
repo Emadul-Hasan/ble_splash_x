@@ -556,6 +556,8 @@ class _AppHomePageState extends State<AppHomePage> {
                                 greenCurrentValue = 0;
                                 EasyLoading.showInfo(
                                     "Green Value expected 400-2000");
+                                greenMax = double.parse(greenValueCache);
+                                controllerGreen.clear();
                               } else if (double.parse(value) > 9.0 &&
                                   double.parse(value) <= 400) {
                                 greenCurrentValue = 1;
@@ -583,8 +585,10 @@ class _AppHomePageState extends State<AppHomePage> {
                                 redMin = yellowMax + 1;
                               } else if (double.parse(value) > 3000) {
                                 yellowMaxCurrentValue = 0;
+                                controllerYellow.clear();
+                                yellowMax = double.parse(yellowValueCache);
                                 EasyLoading.showInfo(
-                                    "Green Value expected ${greenMax.round() + 1}-3000");
+                                    "Yellow Value expected ${greenMax.round() + 1}-3000");
                               } else if (double.parse(value) > 9.0 &&
                                   double.parse(value) <= greenMax + 1) {
                                 yellowMaxCurrentValue = 1;

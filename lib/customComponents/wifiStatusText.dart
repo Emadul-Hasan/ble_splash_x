@@ -24,13 +24,13 @@ class WiFiStatusText extends StatelessWidget {
         ),
         Icon(
           connected ? Icons.wifi_outlined : Icons.signal_wifi_off_outlined,
-          size: 60.0,
-          color: Colors.black38,
+          size: 50.0,
+          color: connected ? Colors.blue : Colors.black38,
         ),
         Container(
           width: 200.0,
           padding:
-              EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 20.0),
+              EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0, bottom: 20.0),
           child: RichText(
             text: TextSpan(children: [
               TextSpan(

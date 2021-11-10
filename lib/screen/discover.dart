@@ -5,6 +5,8 @@ import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:location/location.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DiscoverPage extends StatefulWidget {
   static const String id = 'DiscoverPage';
@@ -19,6 +21,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
   List<BluetoothDevice> scannedDevice = [];
   FlutterBlue flutterBlue = FlutterBlue.instance;
   var subscription;
+  late bool _serviceEnabled;
+
+  Location location = new Location();
 
   void loadingIgnite() async {
     EasyLoading.instance.maskType = EasyLoadingMaskType.black;
@@ -40,9 +45,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
       if (results.length == 0) {
         setState(() {});
       }
-      scannedDevice.clear();
-      scannedDevicesName.clear();
-      // do something with scan results
+      // scannedDevice.clear();
+      // scannedDevicesName.clear();
+      // // do something with scan results
       for (ScanResult r in results) {
         print('${r.device.name} found! rssi: ${r.rssi}');
         setState(() {
@@ -60,6 +65,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
 // Stop scanning
     flutterBlue.stopScan();
     // subscription.cancel();
+  }
+
+  Future<void> turnOnLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+    }
+  }
+
+  @override
+  void initState() {
+    turnOnLocation();
+    super.initState();
   }
 
   @override
@@ -97,8 +115,24 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 color: Colors.black,
               ),
               title: Text(
-                "Switch on Bluetooth",
-                style: TextStyle(fontSize: 16.0),
+                "Switch on Bluetooth of your phone",
+                style: TextStyle(fontSize: 15.0),
+              ),
+            ),
+            SizedBox(
+              height: 5.0,
+            ),
+            ListTile(
+              minLeadingWidth: 2.0,
+              horizontalTitleGap: 5.0,
+              leading: Icon(
+                MdiIcons.zipBox,
+                size: 40.0,
+                color: Colors.black,
+              ),
+              title: Text(
+                "Switch on Bluetooth of your device",
+                style: TextStyle(fontSize: 15.0),
               ),
             ),
             SizedBox(
@@ -115,22 +149,22 @@ class _DiscoverPageState extends State<DiscoverPage> {
               title: RichText(
                 text: TextSpan(children: [
                   TextSpan(
-                      text: "Hold the push button on the CO",
-                      style: TextStyle(fontSize: 16.0, color: Colors.black)),
+                      text: "Press Scan CO",
+                      style: TextStyle(fontSize: 15.0, color: Colors.black)),
                   TextSpan(
                     text: '2',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 12.0,
+                      fontSize: 11.0,
                       fontFeatures: [
                         FontFeature.subscripts(),
                       ],
                     ),
                   ),
                   TextSpan(
-                      text: ' button for 5 seconds',
+                      text: ' Device button to find your device',
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 15.0,
                         color: Colors.black,
                       ))
                 ]),
@@ -144,17 +178,22 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     backgroundColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.black)),
                 onPressed: () async {
-                  var checkS = await _checkDeviceBluetoothIsOn();
-                  if (!checkS) {
-                    await EasyLoading.showInfo("Turn On Bluetooth");
-                  } else {
-                    loadingIgnite();
-                    setState(() {
-                      scanForBluetoothDevice();
-                      Timer(Duration(seconds: 4), () {
-                        EasyLoading.dismiss();
+                  _serviceEnabled = await location.serviceEnabled();
+                  if (!_serviceEnabled) {
+                    _serviceEnabled = await location.requestService();
+                  } else if (_serviceEnabled) {
+                    var checkS = await _checkDeviceBluetoothIsOn();
+                    if (!checkS) {
+                      await EasyLoading.showInfo("Turn On Bluetooth");
+                    } else {
+                      loadingIgnite();
+                      setState(() {
+                        scanForBluetoothDevice();
+                        Timer(Duration(seconds: 4), () {
+                          EasyLoading.dismiss();
+                        });
                       });
-                    });
+                    }
                   }
                 },
                 child: RichText(
