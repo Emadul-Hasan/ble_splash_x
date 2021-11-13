@@ -181,8 +181,9 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                           try {
                             while (calibrationDataController < 15) {
                               Timer(Duration(seconds: 3), () async {
+                                // Asking for calibration date to Esp
+                                //from esp"FC+19/03/21 12:12+N";
                                 await sendData("FC+");
-                                print("Asking for Data");
                               });
                               calibrationDataController++;
                             }
@@ -216,15 +217,12 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                               child: Text(
                                 "Gerät kalibrieren",
                                 style: TextStyle(
-                                  fontSize: 24.0,
+                                  fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black54,
                                 ),
                               ),
                               alignment: Alignment.center,
-                            ),
-                            SizedBox(
-                              height: 30.0,
                             ),
                             Container(
                                 padding: EdgeInsets.only(top: 10.0),
@@ -240,7 +238,18 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                       : () {
                                           Alert(
                                               context: context,
-                                              desc: " Kalibrierung starten?",
+                                              title: "Kalibrierung starten?",
+                                              style: AlertStyle(
+                                                  titleTextAlign:
+                                                      TextAlign.center,
+                                                  descStyle: TextStyle(
+                                                      fontSize: 16.0,
+                                                      fontWeight:
+                                                          FontWeight.normal),
+                                                  titleStyle: TextStyle(
+                                                      fontSize: 16.0,
+                                                      fontWeight:
+                                                          FontWeight.normal)),
                                               buttons: [
                                                 DialogButton(
                                                     onPressed: () async {
@@ -268,13 +277,15 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    "Das Gerät ist erfolgreich kalibriert auf $date!!",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black54,
+                                  child: Center(
+                                    child: Text(
+                                      "Das Gerät ist erfolgreich kalibriert!!",
+                                      textAlign: TextAlign.justify,
+                                      style: TextStyle(
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54,
+                                      ),
                                     ),
                                   ),
                                 )

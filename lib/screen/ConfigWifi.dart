@@ -284,8 +284,6 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                             network = "NOT OK";
                           }
                         }
-                        // print(_data);
-
                       } catch (e) {
                         print(e);
                       }
@@ -380,7 +378,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                 ),
                                 TextButton(
                                   child: Text(
-                                    "QR- Code einscannen",
+                                    "QR-Code einscannen",
                                     style: TextStyle(color: Colors.black),
                                   ),
                                   onPressed: scanData,
@@ -420,7 +418,6 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                     await sendData(newSecondHalfSSID);
                                   });
                                 }
-                                // sleep(Duration(milliseconds: 800));
 
                                 if (newPass.length > 14) {
                                   String halfPass = "";

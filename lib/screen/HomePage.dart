@@ -171,7 +171,6 @@ class _AppHomePageState extends State<AppHomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(' '),
           content: Text(
             'App verlassen?',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -487,6 +486,8 @@ class _AppHomePageState extends State<AppHomePage> {
                         //
                         if (greenMax != 1000.0 || yellowMax != 1500) {
                           factoryButtonColorFlag = true;
+                        } else {
+                          factoryButtonColorFlag = false;
                         }
                       } catch (e) {
                         // DO nothing just ignore & if you want any debug then just print error
@@ -733,6 +734,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                 SizedBox(
                                   width: 10.0,
                                 ),
+                                //todo: size adjust
                                 Expanded(
                                   child: ElevatedButton(
                                     style: ButtonStyle(

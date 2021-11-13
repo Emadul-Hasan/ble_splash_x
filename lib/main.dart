@@ -24,6 +24,7 @@ void configLoading() {
     ..backgroundColor = Colors.blue
     ..indicatorColor = Colors.white
     ..textColor = Colors.white
+    ..textAlign = TextAlign.justify
     ..maskColor = Colors.blue.withOpacity(0.5)
     ..userInteractions = true
     ..dismissOnTap = false;

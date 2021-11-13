@@ -34,7 +34,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                   ),
                   Center(
                     child: Text(
-                      "SPLASH X",
+                      "SPLASH-X",
                       style: TextStyle(fontSize: 20.0),
                     ),
                   )
