@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class StreamCard extends StatelessWidget {
@@ -20,46 +21,21 @@ class StreamCard extends StatelessWidget {
       child: Container(
         width: 300.0,
         padding:
-            EdgeInsets.only(top: 30.0, left: 20.0, right: 20.0, bottom: 20.0),
+            EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0, bottom: 20.0),
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
               color: barColor,
-              width: 4.0,
+              width: 20.0,
             ),
           ),
         ),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            RichText(
-              text: TextSpan(children: [
-                TextSpan(
-                    text: "Live CO",
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400,
-                    )),
-                TextSpan(
-                  text: '2',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.w500,
-                    fontFeatures: [
-                      FontFeature.subscripts(),
-                    ],
-                  ),
-                ),
-                TextSpan(
-                    text: 'Value',
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ))
-              ]),
+            Text(
+              'Echtzeit CO₂ Wert',
+              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 15.0),
             !calibrationFlag

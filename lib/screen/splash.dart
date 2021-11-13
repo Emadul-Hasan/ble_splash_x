@@ -36,7 +36,7 @@ class _MyHomepageState extends State<MyHomepage> {
         children: [
           Center(
             child: Text(
-              'SplashX',
+              'SPLASH-X',
               style: TextStyle(
                 fontSize: 35.0,
                 fontWeight: FontWeight.bold,

@@ -44,13 +44,13 @@ class _QRViewExampleState extends State<QRViewExample> {
                         Navigator.pop(context, result!.code);
                       },
                       child: Text(
-                        "Click To Scan",
+                        "QR- Code scannen",
                       ),
                     ),
                   )
                 : Padding(
                     padding: const EdgeInsets.only(top: 20.0),
-                    child: Text("Searching for QR"),
+                    child: Text("Suche nach QR"),
                   ),
           ),
         ],
@@ -89,10 +89,6 @@ class _QRViewExampleState extends State<QRViewExample> {
         result = scanData;
         scanned = true;
       });
-      // if (scanned) {
-      //   scanned = false;
-      //   Navigator.pop(context, result!.code);
-      // }
     });
   }
 
@@ -100,7 +96,7 @@ class _QRViewExampleState extends State<QRViewExample> {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('no Permission')),
+        SnackBar(content: Text('keine Erlaubnis')),
       );
     }
   }

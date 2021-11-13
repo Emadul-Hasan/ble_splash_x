@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:ble_splash_x/constants/constant.dart';
 import 'package:ble_splash_x/customComponents/CustomDrawer.dart';
@@ -140,7 +141,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   void checkConnectionState() {
     widget.device.state.listen((event) async {
       if (event == BluetoothDeviceState.disconnected) {
-        EasyLoading.showInfo("Device Disconnected");
+        EasyLoading.showInfo("CO₂ - Ampel entkoppelt!");
         Timer(Duration(seconds: 2), () {
           Navigator.pushNamedAndRemoveUntil(
               context, DiscoverPage.id, (Route<dynamic> route) => false);
@@ -202,8 +203,8 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                         arguments: widget.device);
                   },
                   child: Text(
-                    "Config CO2",
-                    style: TextStyle(color: Colors.white),
+                    "Konfig. CO2 Werte",
+                    style: TextStyle(color: Colors.white, fontSize: 14.0),
                   ),
                 ),
               ),
@@ -220,8 +221,8 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                   ),
                   onPressed: () {},
                   child: Text(
-                    "Config Wifi",
-                    style: TextStyle(color: Colors.black),
+                    "Konfig. Wi-Fi",
+                    style: TextStyle(color: Colors.black, fontSize: 14.0),
                   ),
                 ),
               ),
@@ -238,7 +239,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
         ),
         body: isReady == false
             ? Center(
-                child: Text("Reading Data...."),
+                child: Text("Daten Lesen...."),
               )
             : Container(
                 child: StreamBuilder<List>(
@@ -303,22 +304,26 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                               Container(
                                 margin: EdgeInsets.only(top: 10.0),
                                 child: Text(
-                                  "Connected SSID",
+                                  "Verbundenes Netzwerk",
                                   style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                       fontSize: KTextSizeofWifiConfig),
                                 ),
                               ),
                               Container(
                                   margin: EdgeInsets.only(top: 10.0),
                                   width: 220.0,
+                                  height: 50.0,
                                   padding: EdgeInsets.only(
                                       left: 20.0,
                                       right: 20.0,
                                       top: 10.0,
                                       bottom: 10.0),
-                                  child: Text(
-                                    "$oldSSID",
-                                    style: TextStyle(fontSize: 16.0),
+                                  child: Center(
+                                    child: Text(
+                                      "$oldSSID",
+                                      style: TextStyle(fontSize: 16.0),
+                                    ),
                                   ),
                                   decoration: BoxDecoration(
                                     color: Color(0xFFEDEDED),
@@ -329,8 +334,9 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                   )),
                               Container(
                                 margin: EdgeInsets.only(top: 10.0),
-                                child: Text("New SSID",
+                                child: Text("Neues Netzwerk",
                                     style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                         fontSize: KTextSizeofWifiConfig)),
                               ),
                               Inputfield(
@@ -344,8 +350,9 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                               ),
                               Container(
                                 margin: EdgeInsets.only(top: 10.0),
-                                child: Text("New Password",
+                                child: Text("Neues Passwort",
                                     style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                         fontSize: KTextSizeofWifiConfig)),
                               ),
                               Inputfield(
@@ -373,7 +380,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                 ),
                                 TextButton(
                                   child: Text(
-                                    "Scan QR Code",
+                                    "QR- Code einscannen",
                                     style: TextStyle(color: Colors.black),
                                   ),
                                   onPressed: scanData,
@@ -436,9 +443,9 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                                 controller1.clear();
                                 controller2.clear();
                                 controller3.clear();
-                                EasyLoading.showSuccess("SUCCESS");
+                                EasyLoading.showSuccess("Erfolgreich!");
                               },
-                              child: Text("Save")),
+                              child: Text("Speichern")),
                         ],
                       ),
                     );

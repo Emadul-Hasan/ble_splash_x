@@ -27,9 +27,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   void loadingIgnite() async {
     EasyLoading.instance.maskType = EasyLoadingMaskType.black;
-    EasyLoading.instance.loadingStyle = EasyLoadingStyle.dark;
+    EasyLoading.instance.loadingStyle = EasyLoadingStyle.custom;
     EasyLoading.instance.indicatorType = EasyLoadingIndicatorType.circle;
-    await EasyLoading.show(status: 'loading...');
+    EasyLoading.instance.maskColor = Colors.blue;
+    await EasyLoading.show(status: 'Laden...');
   }
 
   Future<bool> _checkDeviceBluetoothIsOn() async {
@@ -45,8 +46,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
       if (results.length == 0) {
         setState(() {});
       }
-      // scannedDevice.clear();
-      // scannedDevicesName.clear();
+      scannedDevice.clear();
+      scannedDevicesName.clear();
       // // do something with scan results
       for (ScanResult r in results) {
         print('${r.device.name} found! rssi: ${r.rssi}');
@@ -97,10 +98,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 110.0,
+              height: 80.0,
             ),
             Text(
-              "SplashX",
+              "SPLASH X",
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
             ),
             SizedBox(
@@ -112,31 +113,26 @@ class _DiscoverPageState extends State<DiscoverPage> {
               leading: Icon(
                 Icons.bluetooth,
                 size: 40.0,
-                color: Colors.black,
+                color: Colors.blue,
               ),
               title: Text(
-                "Switch on Bluetooth of your phone",
-                style: TextStyle(fontSize: 15.0),
+                "Bitte auf dem Mobilgerät Bluetooth aktivieren",
+                style: TextStyle(fontSize: 16.0),
               ),
-            ),
-            SizedBox(
-              height: 5.0,
             ),
             ListTile(
               minLeadingWidth: 2.0,
               horizontalTitleGap: 5.0,
               leading: Icon(
-                MdiIcons.zipBox,
+                MdiIcons.trafficLightOutline,
                 size: 40.0,
-                color: Colors.black,
+                color: Colors.blue,
               ),
               title: Text(
-                "Switch on Bluetooth of your device",
-                style: TextStyle(fontSize: 15.0),
+                "Bitte drücken Sie den schwarzen Taster der CO₂-Ampel einmal.",
+                style: TextStyle(fontSize: 16.0),
+                textAlign: TextAlign.justify,
               ),
-            ),
-            SizedBox(
-              height: 5.0,
             ),
             ListTile(
               minLeadingWidth: 2.0,
@@ -144,82 +140,80 @@ class _DiscoverPageState extends State<DiscoverPage> {
               leading: Icon(
                 Icons.lightbulb_outlined,
                 size: 40.0,
-                color: Colors.black,
+                color: Colors.blue,
               ),
-              title: RichText(
-                text: TextSpan(children: [
-                  TextSpan(
-                      text: "Press Scan CO",
-                      style: TextStyle(fontSize: 15.0, color: Colors.black)),
-                  TextSpan(
-                    text: '2',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 11.0,
-                      fontFeatures: [
-                        FontFeature.subscripts(),
-                      ],
-                    ),
-                  ),
-                  TextSpan(
-                      text: ' Device button to find your device',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black,
-                      ))
-                ]),
+              title: Text(
+                  "Das Licht wird blinken & die Bluetooth-Funktion ist eingeschaltet.",
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 16.0, color: Colors.black)),
+            ),
+            ListTile(
+              minLeadingWidth: 2.0,
+              horizontalTitleGap: 5.0,
+              leading: Icon(
+                MdiIcons.gestureTap,
+                size: 40.0,
+                color: Colors.blue,
+              ),
+              title: Text(
+                "Tippen Sie nun auf die \"CO₂-Ampel suchen\"",
+                style: TextStyle(fontSize: 16.0, color: Colors.black),
+                textAlign: TextAlign.justify,
               ),
             ),
             SizedBox(
-              height: 30.0,
+              height: 7.0,
             ),
             ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith(
-                        (states) => Colors.black)),
-                onPressed: () async {
-                  _serviceEnabled = await location.serviceEnabled();
-                  if (!_serviceEnabled) {
-                    _serviceEnabled = await location.requestService();
-                  } else if (_serviceEnabled) {
-                    var checkS = await _checkDeviceBluetoothIsOn();
-                    if (!checkS) {
-                      await EasyLoading.showInfo("Turn On Bluetooth");
-                    } else {
-                      loadingIgnite();
-                      setState(() {
-                        scanForBluetoothDevice();
-                        Timer(Duration(seconds: 4), () {
-                          EasyLoading.dismiss();
-                        });
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith(
+                      (states) => Colors.blue)),
+              onPressed: () async {
+                _serviceEnabled = await location.serviceEnabled();
+                if (!_serviceEnabled) {
+                  _serviceEnabled = await location.requestService();
+                } else if (_serviceEnabled) {
+                  var checkS = await _checkDeviceBluetoothIsOn();
+                  if (!checkS) {
+                    await EasyLoading.showInfo("Bluetooth aktivieren");
+                  } else {
+                    loadingIgnite();
+                    setState(() {
+                      scanForBluetoothDevice();
+                      Timer(Duration(seconds: 4), () {
+                        EasyLoading.dismiss();
                       });
-                    }
+                    });
                   }
-                },
-                child: RichText(
-                  text: TextSpan(children: [
-                    TextSpan(text: "Scan CO", style: TextStyle(fontSize: 14.0)),
-                    TextSpan(
-                      text: '2',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.0,
-                        fontFeatures: [
-                          FontFeature.subscripts(),
-                        ],
-                      ),
-                    ),
-                    TextSpan(text: ' Device', style: TextStyle(fontSize: 14.0))
-                  ]),
-                )),
+                }
+              },
+              child: Text(
+                "CO₂ Ampel suchen",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.only(top: 30.0, left: 30.0, bottom: 0.0),
+                  padding: EdgeInsets.only(top: 15.0, left: 30.0, bottom: 0.0),
                   child: Text(
-                    'Available devices',
-                    style: TextStyle(fontSize: 15.0),
+                    'Die CO2 Ampel  beginnt mit "SP-..."',
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(top: 40.0, left: 30.0, bottom: 0.0),
+                  child: Text(
+                    'Verfügbare Geräte',
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -228,7 +222,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
               child: ListView.builder(
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
-                      margin: EdgeInsets.only(left: 5.0, right: 5.0),
+                      padding: EdgeInsets.zero,
+                      margin:
+                          EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
                       child: ListTile(
                         title: Text(scannedDevicesName[index]),
                         trailing: StreamBuilder<BluetoothDeviceState>(
@@ -240,7 +236,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.resolveWith(
-                                                (states) => Colors.black)),
+                                                (states) => Colors.blue)),
                                     onPressed: () async {
                                       loadingIgnite();
                                       Timer(Duration(seconds: 2), () {
@@ -250,13 +246,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                         EasyLoading.dismiss();
                                       });
                                     },
-                                    child: Text("Open"));
+                                    child: Text("Öffnen"));
                               }
                               return ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateProperty.resolveWith(
-                                              (states) => Colors.black)),
+                                              (states) => Colors.blue)),
                                   onPressed: () {
                                     loadingIgnite();
                                     Timer(Duration(seconds: 2), () async {
@@ -264,7 +260,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                       EasyLoading.dismiss();
                                     });
                                   },
-                                  child: Text("Tap to Connect"));
+                                  child: Text("Verbinden"));
                             }),
                         onTap: () async {
                           // loadingIgnite();
@@ -274,32 +270,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       ));
                 },
                 itemCount: scannedDevicesName.length,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: RichText(
-                text: TextSpan(children: [
-                  TextSpan(
-                      text: "CO",
-                      style: TextStyle(fontSize: 15.0, color: Colors.black)),
-                  TextSpan(
-                    text: '2',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 12.0,
-                      fontFeatures: [
-                        FontFeature.subscripts(),
-                      ],
-                    ),
-                  ),
-                  TextSpan(
-                      text: ' device name starts with sp',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black,
-                      ))
-                ]),
               ),
             ),
           ],

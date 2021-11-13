@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:ble_splash_x/screen/Calibration.dart';
 import 'package:ble_splash_x/screen/ConfigWifi.dart';
 import 'package:ble_splash_x/screen/HomePage.dart';
@@ -32,11 +30,11 @@ class _DrawerCustomState extends State<DrawerCustom> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 30.0,
+                    height: 60.0,
                   ),
                   Center(
                     child: Text(
-                      "SplashX",
+                      "SPLASH X",
                       style: TextStyle(fontSize: 20.0),
                     ),
                   )
@@ -44,25 +42,9 @@ class _DrawerCustomState extends State<DrawerCustom> {
               ),
             ),
             ListTile(
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Configure CO",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
-                    ),
-                    TextSpan(
-                      text: '2',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12.0,
-                        fontFeatures: [
-                          FontFeature.subscripts(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              title: Text(
+                "CO₂-Werte konfigurieren",
+                style: TextStyle(color: Colors.black, fontSize: 16.0),
               ),
               leading: Container(
                 decoration: BoxDecoration(
@@ -76,7 +58,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 child: CircleAvatar(
                   child: Icon(
                     MdiIcons.fire,
-                    color: Colors.black,
+                    color: Colors.blue,
                     size: 25.0,
                   ),
                   backgroundColor: Colors.white,
@@ -88,15 +70,9 @@ class _DrawerCustomState extends State<DrawerCustom> {
               },
             ),
             ListTile(
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Configure Wifi",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
-                    ),
-                  ],
-                ),
+              title: Text(
+                "Wi-Fi konfigurieren",
+                style: TextStyle(color: Colors.black, fontSize: 16.0),
               ),
               leading: Container(
                 decoration: BoxDecoration(
@@ -110,7 +86,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 child: CircleAvatar(
                   child: Icon(
                     MdiIcons.wifiSync,
-                    color: Colors.black,
+                    color: Colors.blue,
                     size: 25.0,
                   ),
                   backgroundColor: Colors.white,
@@ -122,15 +98,9 @@ class _DrawerCustomState extends State<DrawerCustom> {
               },
             ),
             ListTile(
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Device Calibration",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
-                    ),
-                  ],
-                ),
+              title: Text(
+                "Gerät kalibrieren",
+                style: TextStyle(color: Colors.black, fontSize: 16.0),
               ),
               leading: Container(
                 decoration: BoxDecoration(
@@ -144,7 +114,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 child: CircleAvatar(
                   child: Icon(
                     MdiIcons.reload,
-                    color: Colors.black,
+                    color: Colors.blue,
                     size: 25.0,
                   ),
                   backgroundColor: Colors.white,
@@ -156,15 +126,9 @@ class _DrawerCustomState extends State<DrawerCustom> {
               },
             ),
             ListTile(
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Logout",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
-                    ),
-                  ],
-                ),
+              title: Text(
+                "Abmelden",
+                style: TextStyle(color: Colors.black, fontSize: 16.0),
               ),
               leading: Container(
                 decoration: BoxDecoration(
@@ -178,7 +142,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 child: CircleAvatar(
                   child: Icon(
                     MdiIcons.logout,
-                    color: Colors.black,
+                    color: Colors.blue,
                     size: 25.0,
                   ),
                   backgroundColor: Colors.white,

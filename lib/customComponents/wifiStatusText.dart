@@ -28,48 +28,45 @@ class WiFiStatusText extends StatelessWidget {
           color: connected ? Colors.blue : Colors.black38,
         ),
         Container(
-          width: 200.0,
+          width: 300.0,
           padding:
-              EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0, bottom: 20.0),
-          child: RichText(
-            text: TextSpan(children: [
-              TextSpan(
-                  text: "CO",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400,
-                  )),
-              TextSpan(
-                text: '2',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w500,
-                  fontFeatures: [
-                    FontFeature.subscripts(),
-                  ],
-                ),
-              ),
-              TextSpan(
-                  text: connected
-                      ? ' Device is connected to the internet'
-                      : ' Device is not connected to the internet',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black,
-                  ))
-            ]),
+              EdgeInsets.only(left: 10.0, right: 10.0, top: 15.0, bottom: 20.0),
+          child: Text(
+            connected
+                ? 'Die Ampel ist mit dem Internet verbunden'
+                : 'Die Ampel ist NICHT mit dem Internet verbunden',
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            textAlign: TextAlign.justify,
           ),
         ),
         Container(
           width: 200.0,
           padding:
-              EdgeInsets.only(left: 15.0, right: 10.0, top: 10.0, bottom: 20.0),
+              EdgeInsets.only(left: 15.0, right: 10.0, top: 00.0, bottom: 10.0),
           child: Text(
-            "Network Status: $network",
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            "Netzwerkstatus",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Container(
+          width: 200.0,
+          padding:
+              EdgeInsets.only(left: 15.0, right: 10.0, top: 00.0, bottom: 10.0),
+          child: Text(
+            "$network",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

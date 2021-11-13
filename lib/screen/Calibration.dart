@@ -37,8 +37,9 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   bool isReady = false;
   late Stream<List> stream;
   late BluetoothCharacteristic targetCharacteristics;
-  String message = '';
+  String message = 'N';
   String date = "Never";
+  int calibrationDataController = 0;
 
   connectToDevice() async {
     if (widget.device == null) {
@@ -125,7 +126,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   void checkConnectionState() {
     widget.device.state.listen((event) async {
       if (event == BluetoothDeviceState.disconnected) {
-        EasyLoading.showInfo("Device Disconnected");
+        EasyLoading.showInfo("CO₂ - Ampel entkoppelt!");
         Timer(Duration(seconds: 2), () {
           Navigator.pushNamedAndRemoveUntil(
               context, DiscoverPage.id, (Route<dynamic> route) => false);
@@ -135,36 +136,9 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   }
 
   Future<bool> _onBackPressed() async {
-    Navigator.pushReplacementNamed(context, Homepage.id, arguments: widget.device);
+    Navigator.pushReplacementNamed(context, Homepage.id,
+        arguments: widget.device);
     return true;
-    // final shouldPop = await showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return AlertDialog(
-    //       title: Text('Confirm'),
-    //       content: Text('Do you want to exit the App'),
-    //       actions: <Widget>[
-    //         TextButton(
-    //           child: Text('No'),
-    //           onPressed: () {
-    //             Navigator.of(context).pop(false); //Will not exit the App
-    //           },
-    //         ),
-    //         TextButton(
-    //           child: Text('Yes'),
-    //           onPressed: () {
-    //             if (Platform.isAndroid) {
-    //               SystemNavigator.pop();
-    //             } else {
-    //               exit(0);
-    //             }
-    //           },
-    //         )
-    //       ],
-    //     );
-    //   },
-    // );
-    // return shouldPop ?? false;
   }
 
   @override
@@ -184,7 +158,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
           child: Container(
             child: isReady == false
                 ? Center(
-                    child: Text("Reading Data...."),
+                    child: Text("Daten Lesen...."),
                   )
                 : Container(
                     child: StreamBuilder<List>(
@@ -205,12 +179,26 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                         if (snapshot.connectionState ==
                             ConnectionState.active) {
                           try {
+                            while (calibrationDataController < 15) {
+                              Timer(Duration(seconds: 3), () async {
+                                await sendData("FC+");
+                                print("Asking for Data");
+                              });
+                              calibrationDataController++;
+                            }
                             var x = _dataParser(snapshot.data as List<int>);
                             var _data = x.split('+');
                             if (_data[0] == 'CM') {
-                              message = _data[1];
-                            } else if (_data[0] == 'C') {
                               calibrationFlag = true;
+                              message = _data[1];
+                            } else if (_data[0] == 'FC') {
+                              date = _data[1];
+                              message = _data[2];
+                              if (message == 'Y') {
+                                calibrationFlag = true;
+                              } else {
+                                calibrationFlag = false;
+                              }
                             }
                           } catch (e) {
                             print(e);
@@ -219,13 +207,14 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                         checkConnectionState();
 
                         return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
                               width: 250.0,
+                              height: 300.0,
                               child: Text(
-                                "Calibrate Your Device",
+                                "Gerät kalibrieren",
                                 style: TextStyle(
                                   fontSize: 24.0,
                                   fontWeight: FontWeight.bold,
@@ -243,34 +232,54 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateProperty.resolveWith(
-                                              (states) => Colors.blueAccent)),
-                                  onPressed: () {
-
-                                    Alert(
-                                        context: context,
-                                        title: "Confirmation",
-                                        desc:
-                                            "Are you sure to start calibration?",
-                                        buttons: [
-                                          DialogButton(
-                                              onPressed: () async {
-                                                Navigator.pop(context);
-                                                await sendData("C+");
-                                                EasyLoading.showInfo(
-                                                    "Calibration Starting");
-                                              },
-                                              child: Text("Yes")),
-                                          DialogButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text("No")),
-                                        ]).show();
-                                  },
-                                  child: Text(calibrationFlag
-                                      ? "Calibration On process"
-                                      : "Start Calibration"),
+                                              (states) => calibrationFlag
+                                                  ? Colors.black26
+                                                  : Colors.blueAccent)),
+                                  onPressed: calibrationFlag
+                                      ? () {}
+                                      : () {
+                                          Alert(
+                                              context: context,
+                                              desc: " Kalibrierung starten?",
+                                              buttons: [
+                                                DialogButton(
+                                                    onPressed: () async {
+                                                      Navigator.pop(context);
+                                                      await sendData("C+");
+                                                      EasyLoading.showInfo(
+                                                          "Kalibrierung starten");
+                                                    },
+                                                    child: Text("Ja")),
+                                                DialogButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("Nein")),
+                                              ]).show();
+                                        },
+                                  child: Text(message == 'Y'
+                                      ? "kalibrierend......"
+                                      : "Kalibrierung starten"),
                                 )),
+                            SizedBox(
+                              height: 30.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Das Gerät ist erfolgreich kalibriert auf $date!!",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
                           ],
                         );
                       },

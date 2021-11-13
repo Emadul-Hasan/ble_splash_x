@@ -34,7 +34,6 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as BluetoothDevice;
-    print(args);
     return AppHomePage(
       device: args,
     );
@@ -76,7 +75,7 @@ class _AppHomePageState extends State<AppHomePage> {
   TextEditingController controllerGreen = TextEditingController();
   TextEditingController controllerYellow = TextEditingController();
 
-  String calibrationMode = "Calibrating..";
+  String calibrationMode = "kalibrierend...";
   bool calibrationFlag = false;
 
   Color barColor = Colors.green;
@@ -157,7 +156,7 @@ class _AppHomePageState extends State<AppHomePage> {
   void checkConnectionState() {
     widget.device.state.listen((event) async {
       if (event == BluetoothDeviceState.disconnected) {
-        EasyLoading.showInfo("Device Disconnected");
+        EasyLoading.showInfo("CO₂ - Ampel entkoppelt!");
         Timer(Duration(seconds: 2), () {
           Navigator.pushNamedAndRemoveUntil(
               context, DiscoverPage.id, (Route<dynamic> route) => false);
@@ -172,17 +171,15 @@ class _AppHomePageState extends State<AppHomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Confirm'),
-          content: Text('Do you want to exit the App'),
+          title: Text(' '),
+          content: Text(
+            'App verlassen?',
+            style: TextStyle(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop(false); //Will not exit the App
-              },
-            ),
-            TextButton(
-              child: Text('Yes'),
+              child: Text('Ja'),
               onPressed: () {
                 if (Platform.isAndroid) {
                   widget.device.disconnect();
@@ -191,6 +188,12 @@ class _AppHomePageState extends State<AppHomePage> {
                   widget.device.disconnect();
                   exit(0);
                 }
+              },
+            ),
+            TextButton(
+              child: Text('Nein'),
+              onPressed: () {
+                Navigator.of(context).pop(false); //Will not exit the App
               },
             )
           ],
@@ -208,9 +211,10 @@ class _AppHomePageState extends State<AppHomePage> {
 
   void loadingIgnite() async {
     EasyLoading.instance.maskType = EasyLoadingMaskType.black;
-    EasyLoading.instance.loadingStyle = EasyLoadingStyle.dark;
+    EasyLoading.instance.loadingStyle = EasyLoadingStyle.custom;
     EasyLoading.instance.indicatorType = EasyLoadingIndicatorType.circle;
-    await EasyLoading.show(status: 'loading...');
+    EasyLoading.instance.maskColor = Colors.blue;
+    await EasyLoading.show(status: 'Laden...');
   }
 
   @override
@@ -231,8 +235,8 @@ class _AppHomePageState extends State<AppHomePage> {
                     // Do nothing
                   },
                   child: Text(
-                    "Config CO2",
-                    style: TextStyle(color: Colors.black),
+                    "Konfig. CO2 Werte",
+                    style: TextStyle(color: Colors.black, fontSize: 14.0),
                   ),
                 ),
               ),
@@ -258,7 +262,10 @@ class _AppHomePageState extends State<AppHomePage> {
                     Navigator.pushNamed(context, ConfigWiFiPage.id,
                         arguments: widget.device);
                   },
-                  child: Text("Config Wifi"),
+                  child: Text(
+                    "Konfig. Wi-Fi",
+                    style: TextStyle(fontSize: 14.0),
+                  ),
                 ),
               ),
             ],
@@ -276,11 +283,11 @@ class _AppHomePageState extends State<AppHomePage> {
                   child: Column(
                     children: [
                       SizedBox(
-                        height: 30.0,
+                        height: 60.0,
                       ),
                       Center(
                         child: Text(
-                          "SplashX",
+                          "SPLASH X",
                           style: TextStyle(fontSize: 20.0),
                         ),
                       )
@@ -288,25 +295,9 @@ class _AppHomePageState extends State<AppHomePage> {
                   ),
                 ),
                 ListTile(
-                  title: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Configure CO",
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
-                        ),
-                        TextSpan(
-                          text: '2',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12.0,
-                            fontFeatures: [
-                              FontFeature.subscripts(),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                  title: Text(
+                    "CO₂-Werte konfigurieren",
+                    style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                   leading: Container(
                     decoration: BoxDecoration(
@@ -322,7 +313,7 @@ class _AppHomePageState extends State<AppHomePage> {
                     child: CircleAvatar(
                       child: Icon(
                         MdiIcons.fire,
-                        color: Colors.black,
+                        color: Colors.blue,
                         size: 25.0,
                       ),
                       backgroundColor: Colors.white,
@@ -334,15 +325,9 @@ class _AppHomePageState extends State<AppHomePage> {
                   },
                 ),
                 ListTile(
-                  title: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Configure Wifi",
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
-                        ),
-                      ],
-                    ),
+                  title: Text(
+                    "Wi-Fi konfigurieren",
+                    style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                   leading: Container(
                     decoration: BoxDecoration(
@@ -358,7 +343,7 @@ class _AppHomePageState extends State<AppHomePage> {
                     child: CircleAvatar(
                       child: Icon(
                         MdiIcons.wifiSync,
-                        color: Colors.black,
+                        color: Colors.blue,
                         size: 25.0,
                       ),
                       backgroundColor: Colors.white,
@@ -373,15 +358,9 @@ class _AppHomePageState extends State<AppHomePage> {
                   },
                 ),
                 ListTile(
-                  title: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Device Calibration",
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
-                        ),
-                      ],
-                    ),
+                  title: Text(
+                    "Gerät kalibrieren",
+                    style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                   leading: Container(
                     decoration: BoxDecoration(
@@ -397,7 +376,7 @@ class _AppHomePageState extends State<AppHomePage> {
                     child: CircleAvatar(
                       child: Icon(
                         MdiIcons.reload,
-                        color: Colors.black,
+                        color: Colors.blue,
                         size: 25.0,
                       ),
                       backgroundColor: Colors.white,
@@ -412,15 +391,9 @@ class _AppHomePageState extends State<AppHomePage> {
                   },
                 ),
                 ListTile(
-                  title: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Logout",
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
-                        ),
-                      ],
-                    ),
+                  title: Text(
+                    "Abmelden",
+                    style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                   leading: Container(
                     decoration: BoxDecoration(
@@ -436,7 +409,7 @@ class _AppHomePageState extends State<AppHomePage> {
                     child: CircleAvatar(
                       child: Icon(
                         MdiIcons.logout,
-                        color: Colors.black,
+                        color: Colors.blue,
                         size: 25.0,
                       ),
                       backgroundColor: Colors.white,
@@ -454,7 +427,7 @@ class _AppHomePageState extends State<AppHomePage> {
         ),
         body: isReady == false
             ? Center(
-                child: Text("Reading Data...."),
+                child: Text("Daten Lesen...."),
               )
             : Container(
                 child: StreamBuilder<List>(
@@ -463,7 +436,8 @@ class _AppHomePageState extends State<AppHomePage> {
                       (BuildContext context, AsyncSnapshot<List> snapshot) {
                     if (snapshot.hasError) {
                       Timer(Duration(seconds: 30), () {
-                        print('done');
+                        // print('done');
+                        // just Wait
                       });
                       return Center(
                         child: CircularProgressIndicator(
@@ -488,7 +462,6 @@ class _AppHomePageState extends State<AppHomePage> {
 
                         var x = _dataParser(snapshot.data as List<int>);
                         var _data = x.split('+');
-                        print(_data);
 
                         if (_data[0] == "C") {
                           calibrationFlag = true;
@@ -504,9 +477,9 @@ class _AppHomePageState extends State<AppHomePage> {
                           co2 = _data[0];
                           value = double.parse(co2);
                         }
-                        if (value < yellowMin) {
+                        if (value < greenMax + 1) {
                           barColor = Colors.green;
-                        } else if (value < redMin) {
+                        } else if (value <= yellowMax && value > greenMax) {
                           barColor = Colors.yellow;
                         } else {
                           barColor = Colors.red;
@@ -516,7 +489,8 @@ class _AppHomePageState extends State<AppHomePage> {
                           factoryButtonColorFlag = true;
                         }
                       } catch (e) {
-                        print(e);
+                        // DO nothing just ignore & if you want any debug then just print error
+                        // print(e);
                       }
                     }
                     checkConnectionState();
@@ -544,7 +518,7 @@ class _AppHomePageState extends State<AppHomePage> {
                           ),
                           //################## Green Container ####################
                           RangeContainer(
-                            Hint: greenValueCache,
+                            hint: greenValueCache,
                             min: 400,
                             color: Colors.green,
                             function: (value) {
@@ -554,8 +528,10 @@ class _AppHomePageState extends State<AppHomePage> {
                                 greenMax = double.parse(value);
                               } else if (double.parse(value) > greenMaxRange) {
                                 greenCurrentValue = 0;
+                                // Green Vlaue upper limit notice
                                 EasyLoading.showInfo(
-                                    "Green Value expected 400-2000");
+                                    "Der Höchstwert für grünes Licht kann nicht größer sein als der Höchstwert für gelbes Licht. Bitte geben Sie einen größeren Maximalwert für gelbes Licht ein");
+
                                 greenMax = double.parse(greenValueCache);
                                 controllerGreen.clear();
                               } else if (double.parse(value) > 9.0 &&
@@ -572,7 +548,7 @@ class _AppHomePageState extends State<AppHomePage> {
                           ),
                           // ########## Yellow Container #############
                           RangeContainer(
-                            Hint: yellowValueCache,
+                            hint: yellowValueCache,
                             min: (greenMax > 400 && greenMax < 2001)
                                 ? greenMax + 1
                                 : yellowMin,
@@ -587,8 +563,9 @@ class _AppHomePageState extends State<AppHomePage> {
                                 yellowMaxCurrentValue = 0;
                                 controllerYellow.clear();
                                 yellowMax = double.parse(yellowValueCache);
+                                //Yello Value upper limit notice
                                 EasyLoading.showInfo(
-                                    "Yellow Value expected ${greenMax.round() + 1}-3000");
+                                    "Der Höchstwert für grünes Licht kann nicht größer sein als der Höchstwert für gelbes Licht. Bitte geben Sie einen größeren Maximalwert für gelbes Licht ein");
                               } else if (double.parse(value) > 9.0 &&
                                   double.parse(value) <= greenMax + 1) {
                                 yellowMaxCurrentValue = 1;
@@ -620,7 +597,11 @@ class _AppHomePageState extends State<AppHomePage> {
                                       right: 20.0,
                                       top: 10.0,
                                       bottom: 10.0),
-                                  child: Text(redMin.round().toString()),
+                                  child: Text(
+                                    redMin.round().toString(),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Color(0xFFEDEDED),
                                     border: Border.all(
@@ -644,7 +625,9 @@ class _AppHomePageState extends State<AppHomePage> {
                                       bottom: 10.0),
                                   child: Text(
                                     '10000',
-                                    textAlign: TextAlign.center,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.start,
                                   ),
                                   decoration: BoxDecoration(
                                     color: Color(0xFFEDEDED),
@@ -667,23 +650,19 @@ class _AppHomePageState extends State<AppHomePage> {
                                   child: ElevatedButton(
                                     onPressed: saveButtonColorFlag
                                         ? () {
-                                            print(
-                                                "Yellow Current Value=$yellowMaxCurrentValue**");
                                             if (greenCurrentValue == 1) {
                                               EasyLoading.showInfo(
-                                                  "Green Maximum value cannot be lower or equal to minimum value");
+                                                  "Der Höchstwert für grünes Licht kann nicht größer sein als der Höchstwert für gelbes Licht. Bitte geben Sie einen größeren Maximalwert für gelbes Licht ein");
                                             } else if (yellowMaxCurrentValue ==
                                                 1) {
                                               EasyLoading.showInfo(
-                                                  "Yellow Maximum value cannot be lower or equal to minimum value");
+                                                  "Der Höchstwert für grünes Licht kann nicht größer sein als der Höchstwert für gelbes Licht. Bitte geben Sie einen größeren Maximalwert für gelbes Licht ein");
                                             } else if (greenCurrentValue == 0 &&
                                                 yellowMaxCurrentValue == 0) {
-                                              print(
-                                                  "Green Max: $greenMax, YellowMax: $yellowMax");
                                               if (greenMax.round() + 1 >
                                                   yellowMax) {
                                                 EasyLoading.showInfo(
-                                                    "Yellow Maximum value cannot be lower or equal to minimum value");
+                                                    "Der Höchstwert für grünes Licht kann nicht größer sein als der Höchstwert für gelbes Licht. Bitte geben Sie einen größeren Maximalwert für gelbes Licht ein");
                                               } else {
                                                 Alert(
                                                     closeFunction: () {
@@ -693,51 +672,55 @@ class _AppHomePageState extends State<AppHomePage> {
                                                           1;
                                                     },
                                                     context: context,
-                                                    title: "Confirmation",
+                                                    title:
+                                                        "Sind Sie sicher, dass Sie die folgenden CO2-Werte einstellen\?",
+                                                    style: AlertStyle(
+                                                        titleTextAlign:
+                                                            TextAlign.start,
+                                                        descStyle: TextStyle(
+                                                            fontSize: 16.0,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                        titleStyle: TextStyle(
+                                                            fontSize: 16.0,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal)),
                                                     desc:
-                                                        "Are you sure to change the value to\n Green:${greenMin.round()} - ${greenMax.round()}\nYellow:${greenMax.round() + 1}-${yellowMax.round()}\nRed:${yellowMax.round() + 1}- 10000",
+                                                        "Grün: ${greenMin.round()} - ${greenMax.round()}\nGelb: ${greenMax.round() + 1}-${yellowMax.round()}\nRot: ${yellowMax.round() + 1}- 10000",
                                                     buttons: [
                                                       DialogButton(
                                                           onPressed: () async {
                                                             Navigator.pop(
                                                                 context);
-                                                            print(greenMax);
-                                                            print(yellowMax);
+
                                                             String limit =
                                                                 'R+$greenMax+$yellowMax+';
                                                             await sendData(
                                                                 limit);
 
-                                                            EasyLoading
-                                                                .showSuccess(
-                                                                    "Success");
+                                                            EasyLoading.showSuccess(
+                                                                "Erfolgreich!");
                                                             saveButtonColorFlag =
                                                                 false;
                                                           },
-                                                          child: Text("Yes")),
+                                                          child: Text("Ja")),
                                                       DialogButton(
                                                           onPressed: () {
                                                             Navigator.pop(
                                                                 context);
-                                                            // controllerYellow
-                                                            //     .clear();
-                                                            // controllerGreen.clear();
-                                                            // redMin = double.parse(
-                                                            //         yellowValueCache) +
-                                                            //     1;
                                                           },
-                                                          child: Text("No")),
+                                                          child: Text("Nein")),
                                                     ]).show();
                                               }
                                             }
                                           }
-                                        // else {
-                                        //   EasyLoading.showInfo(
-                                        //       "Maximum Value Cannot be Lower Than Minimum");
-                                        // }
-
                                         : () {},
-                                    child: Text("Save"),
+                                    child: Text(
+                                      "Speichern",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
                                     style: ButtonStyle(
                                         backgroundColor: MaterialStateProperty
                                             .resolveWith((states) =>
@@ -763,9 +746,13 @@ class _AppHomePageState extends State<AppHomePage> {
                                         ? () {
                                             Alert(
                                                 context: context,
-                                                title: "Confirmation",
-                                                desc:
-                                                    "Are you sure to change the value to default value",
+                                                title:
+                                                    "Möchten Sie die CO2-Werte auf die Werkseinstellung zurücksetzen?",
+                                                style: AlertStyle(
+                                                    titleTextAlign:
+                                                        TextAlign.justify,
+                                                    titleStyle: TextStyle(
+                                                        fontSize: 15.0)),
                                                 buttons: [
                                                   DialogButton(
                                                       onPressed: () async {
@@ -787,16 +774,19 @@ class _AppHomePageState extends State<AppHomePage> {
                                                         yellowMin = 10001.0;
                                                         redMin = 1501.0;
                                                       },
-                                                      child: Text("Yes")),
+                                                      child: Text("Ja")),
                                                   DialogButton(
                                                       onPressed: () {
                                                         Navigator.pop(context);
                                                       },
-                                                      child: Text("No")),
+                                                      child: Text("Nein")),
                                                 ]).show();
                                           }
                                         : () {},
-                                    child: Text("Factory Default"),
+                                    child: Text(
+                                      "Werkseinstellung",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
                                   ),
                                 ),
                               ],

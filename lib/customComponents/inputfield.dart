@@ -1,4 +1,5 @@
 import 'package:ble_splash_x/constants/constant.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Inputfield extends StatelessWidget {
@@ -29,6 +30,8 @@ class Inputfield extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: TextField(
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 16.0),
         controller: controller,
         keyboardType: keyBoardtype,
         obscureText: obscuretext,
