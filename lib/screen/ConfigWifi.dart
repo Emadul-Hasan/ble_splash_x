@@ -48,7 +48,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
   late BluetoothCharacteristic targetCharacteristics;
   bool connected = false;
 
-  String network = "Unknown";
+  String network = "Unbekannt";
   late String oldSSID = "";
   late String oldSSIDInput;
 
@@ -203,7 +203,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                         arguments: widget.device);
                   },
                   child: Text(
-                    "Konfig. CO2 Werte",
+                    "Konfig. CO₂ Werte",
                     style: TextStyle(color: Colors.white, fontSize: 14.0),
                   ),
                 ),
@@ -281,7 +281,7 @@ class _WifiConfigPageState extends State<WifiConfigPage> {
                           if (_data[2] == "OK") {
                             network = "OK";
                           } else if (_data[2] == "NOK") {
-                            network = "NOT OK";
+                            network = "kein Internetzugang";
                           }
                         }
                       } catch (e) {

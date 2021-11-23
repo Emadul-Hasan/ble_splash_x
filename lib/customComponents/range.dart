@@ -33,10 +33,13 @@ class RangeContainer extends StatelessWidget {
             width: 10.0,
           ),
           Container(
+              width: 110.0,
+              height: 45.0,
               padding: EdgeInsets.only(
-                  left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
+                  left: 20.0, right: 20.0, top: 13.0, bottom: 10.0),
               child: Text(
                 "${min.round()}",
+                textAlign: TextAlign.start,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               decoration: BoxDecoration(
@@ -54,7 +57,7 @@ class RangeContainer extends StatelessWidget {
               )),
           Container(
               width: 110.0,
-              height: 39.0,
+              height: 45.0,
               child: TextField(
                   style: TextStyle(fontWeight: FontWeight.bold),
                   keyboardType: TextInputType.number,

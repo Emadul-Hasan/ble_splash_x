@@ -57,7 +57,7 @@ class _AppHomePageState extends State<AppHomePage> {
 
   String co2 = "0.0";
   double greenMin = 400;
-  double greenMax = 2000;
+  double greenMax = 1000;
   double greenMaxRange = 2000;
   int greenCurrentValue = 0;
 
@@ -234,7 +234,7 @@ class _AppHomePageState extends State<AppHomePage> {
                     // Do nothing
                   },
                   child: Text(
-                    "Konfig. CO2 Werte",
+                    "Konfig. CO₂ Werte",
                     style: TextStyle(color: Colors.black, fontSize: 14.0),
                   ),
                 ),
@@ -286,7 +286,7 @@ class _AppHomePageState extends State<AppHomePage> {
                       ),
                       Center(
                         child: Text(
-                          "SPLASH X",
+                          "SPLASH-X",
                           style: TextStyle(fontSize: 20.0),
                         ),
                       )
@@ -486,7 +486,7 @@ class _AppHomePageState extends State<AppHomePage> {
                         //
                         if (greenMax != 1000.0 || yellowMax != 1500) {
                           factoryButtonColorFlag = true;
-                        } else {
+                        } else if (greenMax == 1000.0 && yellowMax == 1500) {
                           factoryButtonColorFlag = false;
                         }
                       } catch (e) {
@@ -531,7 +531,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                 greenCurrentValue = 0;
                                 // Green Vlaue upper limit notice
                                 EasyLoading.showInfo(
-                                    "Der Höchstwert für grünes Licht kann nicht größer sein als der Höchstwert für gelbes Licht. Bitte geben Sie einen größeren Maximalwert für gelbes Licht ein");
+                                    "Die Wert grüner Ampel: 400 - 2000 ppm");
 
                                 greenMax = double.parse(greenValueCache);
                                 controllerGreen.clear();
@@ -564,9 +564,9 @@ class _AppHomePageState extends State<AppHomePage> {
                                 yellowMaxCurrentValue = 0;
                                 controllerYellow.clear();
                                 yellowMax = double.parse(yellowValueCache);
-                                //Yello Value upper limit notice
+                                //Yellow Value upper limit notice
                                 EasyLoading.showInfo(
-                                    "Der Höchstwert für grünes Licht kann nicht größer sein als der Höchstwert für gelbes Licht. Bitte geben Sie einen größeren Maximalwert für gelbes Licht ein");
+                                    "Die Wert gelber Ampel: ${greenMax.round() + 1} - 3000 ppm");
                               } else if (double.parse(value) > 9.0 &&
                                   double.parse(value) <= greenMax + 1) {
                                 yellowMaxCurrentValue = 1;
@@ -593,10 +593,12 @@ class _AppHomePageState extends State<AppHomePage> {
                                 width: 10.0,
                               ),
                               Container(
+                                  width: 110.0,
+                                  height: 45.0,
                                   padding: EdgeInsets.only(
                                       left: 20.0,
                                       right: 20.0,
-                                      top: 10.0,
+                                      top: 13.0,
                                       bottom: 10.0),
                                   child: Text(
                                     redMin.round().toString(),
@@ -618,11 +620,11 @@ class _AppHomePageState extends State<AppHomePage> {
                                   )),
                               Container(
                                   width: 110.0,
-                                  height: 40.0,
+                                  height: 45.0,
                                   padding: EdgeInsets.only(
                                       left: 20.0,
                                       right: 20.0,
-                                      top: 10.0,
+                                      top: 13.0,
                                       bottom: 10.0),
                                   child: Text(
                                     '10000',
@@ -644,7 +646,7 @@ class _AppHomePageState extends State<AppHomePage> {
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 30.0, vertical: 3.0),
+                                horizontal: 10.0, vertical: 3.0),
                             child: Row(
                               children: [
                                 Expanded(
@@ -674,7 +676,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                                     },
                                                     context: context,
                                                     title:
-                                                        "Sind Sie sicher, dass Sie die folgenden CO2-Werte einstellen\?",
+                                                        "Sind Sie sicher, dass Sie die folgenden CO₂-Werte einstellen\?",
                                                     style: AlertStyle(
                                                         titleTextAlign:
                                                             TextAlign.start,
@@ -734,7 +736,6 @@ class _AppHomePageState extends State<AppHomePage> {
                                 SizedBox(
                                   width: 10.0,
                                 ),
-                                //todo: size adjust
                                 Expanded(
                                   child: ElevatedButton(
                                     style: ButtonStyle(
@@ -749,7 +750,7 @@ class _AppHomePageState extends State<AppHomePage> {
                                             Alert(
                                                 context: context,
                                                 title:
-                                                    "Möchten Sie die CO2-Werte auf die Werkseinstellung zurücksetzen?",
+                                                    "Möchten Sie die CO₂-Werte auf die Werkseinstellung zurücksetzen?",
                                                 style: AlertStyle(
                                                     titleTextAlign:
                                                         TextAlign.justify,

@@ -42,7 +42,10 @@ class StreamCard extends StatelessWidget {
                 ? RichText(
                     text: TextSpan(children: [
                       TextSpan(
-                          text: double.parse(co2) == 0.0 ? "..." : co2,
+                          text: double.parse(co2) == 0.0 ||
+                                  double.parse(co2) == 1.0
+                              ? "..."
+                              : co2,
                           style: TextStyle(
                             fontSize: 40.0,
                             color: Colors.black,

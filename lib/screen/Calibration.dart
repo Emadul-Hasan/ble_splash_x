@@ -6,6 +6,7 @@ import 'package:ble_splash_x/screen/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'discover.dart';
@@ -38,9 +39,9 @@ class _CalibrationPage1State extends State<CalibrationPage1>
   late Stream<List> stream;
   late BluetoothCharacteristic targetCharacteristics;
   String message = 'N';
-  String date = "Never";
+  String date = "     ";
   int calibrationDataController = 0;
-
+  String time = "    ";
   connectToDevice() async {
     if (widget.device == null) {
       _pop();
@@ -182,19 +183,26 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                             while (calibrationDataController < 15) {
                               Timer(Duration(seconds: 3), () async {
                                 // Asking for calibration date to Esp
-                                //from esp"FC+19/03/21 12:12+N";
+                                //from esp"FC+19.03.21 12:12+N";
                                 await sendData("FC+");
                               });
                               calibrationDataController++;
                             }
                             var x = _dataParser(snapshot.data as List<int>);
                             var _data = x.split('+');
+                            print(_data[1]);
                             if (_data[0] == 'CM') {
                               calibrationFlag = true;
                               message = _data[1];
                             } else if (_data[0] == 'FC') {
-                              date = _data[1];
+                              String wholeText = _data[1];
                               message = _data[2];
+                              var splitDateTime = wholeText.split(' ');
+                              var wholeDate = splitDateTime[0];
+                              time = "${splitDateTime[1]}:00";
+                              var splitDate = wholeDate.split('.');
+                              date =
+                                  "${splitDate[0]}.${splitDate[1]}.20${splitDate[2]}";
                               if (message == 'Y') {
                                 calibrationFlag = true;
                               } else {
@@ -208,24 +216,56 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                         checkConnectionState();
 
                         return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            ListTile(
+                              minLeadingWidth: 2.0,
+                              horizontalTitleGap: 5.0,
+                              leading: Icon(
+                                MdiIcons.windowOpen,
+                                size: 40.0,
+                                color: Colors.blue,
+                              ),
+                              title: Text(
+                                "Stellen Sie die CO₂ -Ampel für 5 Minuten in die frische Luft.",
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.black),
+                                textAlign: TextAlign.justify,
+                              ),
+                            ),
+                            ListTile(
+                              minLeadingWidth: 2.0,
+                              horizontalTitleGap: 5.0,
+                              leading: Icon(
+                                MdiIcons.gestureTap,
+                                size: 40.0,
+                                color: Colors.blue,
+                              ),
+                              title: Text(
+                                "Drücken Sie nun die Taste Kalibrieren",
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.black),
+                                textAlign: TextAlign.justify,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 70.0,
+                            ),
                             Container(
-                              width: 250.0,
-                              height: 300.0,
+                              width: 300.0,
                               child: Text(
                                 "Gerät kalibrieren",
                                 style: TextStyle(
-                                  fontSize: 20.0,
+                                  fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black54,
+                                  color: Colors.black,
                                 ),
                               ),
                               alignment: Alignment.center,
                             ),
                             Container(
-                                padding: EdgeInsets.only(top: 10.0),
+                                padding: EdgeInsets.only(top: 5.0),
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                       backgroundColor:
@@ -256,7 +296,7 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                                       Navigator.pop(context);
                                                       await sendData("C+");
                                                       EasyLoading.showInfo(
-                                                          "Kalibrierung starten");
+                                                          "Kalibrierung gestartet");
                                                     },
                                                     child: Text("Ja")),
                                                 DialogButton(
@@ -270,27 +310,68 @@ class _CalibrationPage1State extends State<CalibrationPage1>
                                       ? "kalibrierend......"
                                       : "Kalibrierung starten"),
                                 )),
-                            SizedBox(
-                              height: 30.0,
+                            Container(
+                              padding: EdgeInsets.only(top: 5.0),
+                              width: 300.0,
+                              child: Center(
+                                child: Text(
+                                  "Zuletzt erfolgreich kalibriert",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              alignment: Alignment.center,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "Das Gerät ist erfolgreich kalibriert!!",
+                            Container(
+                              padding: EdgeInsets.only(top: 15.0),
+                              width: 300.0,
+                              child: Center(
+                                child: Text(
+                                  "$date $time",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                            ),
+                            SizedBox(
+                              height: 100.0,
+                            ),
+                            Container(
+                              width: 300.0,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: RichText(
+                                      text: TextSpan(children: [
+                                        TextSpan(
+                                          text: "Hinweis: ",
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.red),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              "Bevor Sie Kalibrierung des Geräts starten, öffnen Sie das Fenster und lassen Sie es draußen für 5 Minuten stehen. Andernfalls wird die Kalibrierung fehlerhaft sein. Die CO₂-Ampel ist schön kalibriert.",
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.black),
+                                        )
+                                      ]),
                                       textAlign: TextAlign.justify,
-                                      style: TextStyle(
-                                        fontSize: 24.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black54,
-                                      ),
                                     ),
                                   ),
-                                )
-                              ],
-                            )
+                                ],
+                              ),
+                            ),
                           ],
                         );
                       },

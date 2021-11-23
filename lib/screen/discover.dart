@@ -37,8 +37,17 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return await flutterBlue.isOn;
   }
 
-  void scanForBluetoothDevice() {
-    // Start scanning
+  Future<void> scanForBluetoothDevice() async {
+    scannedDevice.clear();
+    scannedDevicesName.clear();
+    List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
+    if (connectedDevices.isNotEmpty) {
+      // print("COnnexrtesfafasjkfhjk:");
+      // print(connectedDevices[0]);
+      await connectedDevices[0].disconnect();
+    }
+
+// Start scanning
     flutterBlue.startScan(timeout: Duration(seconds: 5));
 
 // Listen to scan results
@@ -46,8 +55,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
       if (results.length == 0) {
         setState(() {});
       }
-      scannedDevice.clear();
-      scannedDevicesName.clear();
+
       // // do something with scan results
       for (ScanResult r in results) {
         print('${r.device.name} found! rssi: ${r.rssi}');
@@ -101,7 +109,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
               height: 80.0,
             ),
             Text(
-              "SPLASH X",
+              "SPLASH-X",
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
             ),
             SizedBox(
@@ -120,6 +128,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 style: TextStyle(fontSize: 16.0),
               ),
             ),
+            SizedBox(
+              height: 3.0,
+            ),
             ListTile(
               minLeadingWidth: 2.0,
               horizontalTitleGap: 5.0,
@@ -134,6 +145,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 textAlign: TextAlign.justify,
               ),
             ),
+            SizedBox(
+              height: 3.0,
+            ),
             ListTile(
               minLeadingWidth: 2.0,
               horizontalTitleGap: 5.0,
@@ -146,6 +160,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   "Das Licht wird blinken & die Bluetooth-Funktion ist eingeschaltet.",
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 16.0, color: Colors.black)),
+            ),
+            SizedBox(
+              height: 3.0,
             ),
             ListTile(
               minLeadingWidth: 2.0,
@@ -198,7 +215,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 Container(
                   padding: EdgeInsets.only(top: 15.0, left: 30.0, bottom: 0.0),
                   child: Text(
-                    'Die CO2 Ampel  beginnt mit "SP-..."',
+                    'Die CO₂ Ampel  beginnt mit "SP-..."',
                     style:
                         TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                   ),

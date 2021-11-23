@@ -57,18 +57,24 @@ class WiFiStatusText extends StatelessWidget {
           ),
         ),
         Container(
-          width: 200.0,
-          padding:
-              EdgeInsets.only(left: 15.0, right: 10.0, top: 00.0, bottom: 10.0),
-          child: Text(
-            "$network",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
+            margin: EdgeInsets.only(top: 10.0),
+            width: 220.0,
+            height: 50.0,
+            padding: EdgeInsets.only(
+                left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
+            child: Center(
+              child: Text(
+                "$network",
+                style: TextStyle(fontSize: 16.0),
+              ),
             ),
-          ),
-        ),
+            decoration: BoxDecoration(
+              color: Color(0xFFEDEDED),
+              border: Border.all(
+                color: Color(0xFFEDEDED),
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            )),
       ],
     );
   }
