@@ -42,9 +42,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
     scannedDevicesName.clear();
     List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
     if (connectedDevices.isNotEmpty) {
-      // print("COnnexrtesfafasjkfhjk:");
-      // print(connectedDevices[0]);
-      await connectedDevices[0].disconnect();
+      scannedDevice.add(connectedDevices[0]);
+      scannedDevicesName.add(connectedDevices[0].name);
     }
 
 // Start scanning
@@ -273,7 +272,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                   onPressed: () {
                                     loadingIgnite();
                                     Timer(Duration(seconds: 2), () async {
-                                      await scannedDevice[index].connect();
+                                      await scannedDevice[index]
+                                          .connect(autoConnect: false);
                                       EasyLoading.dismiss();
                                     });
                                   },

@@ -150,14 +150,16 @@ class _AppHomePageState extends State<AppHomePage> {
   sendData(String data) async {
     if (targetCharacteristics == null) return;
     List<int> bytes = utf8.encode(data);
-    await targetCharacteristics.write(bytes);
+    await targetCharacteristics.write(bytes, withoutResponse: true);
   }
 
   void checkConnectionState() {
     widget.device.state.listen((event) async {
       if (event == BluetoothDeviceState.disconnected) {
+        // widget.device.disconnect();
         EasyLoading.showInfo("CO₂ - Ampel entkoppelt!");
         Timer(Duration(seconds: 2), () {
+          // Navigator.pushReplacementNamed(context, DiscoverPage.id);
           Navigator.pushNamedAndRemoveUntil(
               context, DiscoverPage.id, (Route<dynamic> route) => false);
         });
